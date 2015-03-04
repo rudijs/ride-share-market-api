@@ -25,7 +25,7 @@ An error response may have one or more error objects with these properties:
 
 ## Install
 
-    git clone git@bitbucket.org:rudijs/ride-share-market-api.git
+    git clone git@github.com:rudijs/ride-share-market-api.git
     cd ride-share-market-api
     git fetch && git checkout develop
     npm install
