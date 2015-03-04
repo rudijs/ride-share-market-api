@@ -1,0 +1,5 @@
+# Rudy Barbera
+curl -H 'Content-Type: application/vnd.api+json' -H 'Accept: application/vnd.api+json' -H 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiUnVkeSIsImlkIjoiNTQyZWNjNTczOGNkMjY3ZjUyYWMyMDg1IiwiaWF0IjoxNDEyNDMzOTcyfQ.Kzb6BlX5QmdqqrzyfiIfCXWjtG9hHJtzYxGvkmYCie0' localhost:3001/users/542ecc5738cd267f52ac2085
+
+# Find All Rideshares
+curl -H 'Content-Type: application/vnd.api+json' -H 'Accept: application/vnd.api+json' localhost:3001/rideshares

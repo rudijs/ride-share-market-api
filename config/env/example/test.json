@@ -1,0 +1,26 @@
+{
+  "app": {
+    "hostname": "127.0.0.1",
+    "port": "3002"
+  },
+  "oauth": {
+    "protocol": "http://",
+    "redirectUrl": {
+      "location": "api01.dev.loc.ridesharemarket.com:3001"
+    },
+    "success": {
+      "location": "www.dev.loc.ridesharemarket.com:3000/#!/welcome"
+    },
+    "error": {
+      "location": "www.dev.loc.ridesharemarket.com:3000/#!/error"
+    }
+  },
+  "messageQueue": {
+    "rabbitmq": {
+      "user": "rsm",
+      "password": "UPDATE-THIS-VALUE",
+      "url": "192.168.33.10",
+      "vhost": "/rsm"
+    }
+  }
+}

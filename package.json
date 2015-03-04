@@ -1,0 +1,45 @@
+{
+  "name": "ride-share-market-api",
+  "version": "0.0.1",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"See Readme for test runners\" && exit 0"
+  },
+  "author": "ridesharemarket.com",
+  "license": "",
+  "private": true,
+  "dependencies": {
+    "amqp-rpc-factory": "^0.2.2",
+    "amqplib": "^0.3.0",
+    "bunyan": "^1.0.0",
+    "googleapis": "^1.0.12",
+    "jsonwebtoken": "^3.2.2",
+    "koa": "^0.18.1",
+    "koa-bodyparser": "^1.2.0",
+    "koa-compress": "^1.0.7",
+    "koa-cors": "0.0.14",
+    "koa-helmet": "0.0.3",
+    "koa-json-logger": "0.0.19",
+    "koa-jsonapi-headers": "^1.1.2",
+    "koa-router": "^4.2.0",
+    "nconf": "^0.7.1",
+    "q": "^1.0.1",
+    "require-walk": "^0.1.4",
+    "uuid": "^2.0.1"
+  },
+  "devDependencies": {
+    "chai": "^2.1.0",
+    "co-mocha": "^1.0.1",
+    "gulp": "^3.8.6",
+    "gulp-docco": "0.0.4",
+    "gulp-jshint": "^1.7.1",
+    "gulp-mocha": "^2.0.0",
+    "gulp-nodemon": "^1.0.4",
+    "gulp-task-listing": "^1.0.0",
+    "istanbul-harmony": "^0.3.0",
+    "mocha": "^2.0.1",
+    "sinon": "^1.10.3",
+    "supertest": "^0.15.0"
+  }
+}
