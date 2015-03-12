@@ -10,13 +10,13 @@
   "license": "",
   "private": true,
   "dependencies": {
-    "amqp-rpc-factory": "^0.2.2",
+    "amqp-rpc-factory": "^0.2.6",
     "amqplib": "^0.3.0",
     "bunyan": "^1.0.0",
     "googleapis": "^1.0.12",
-    "jsonwebtoken": "^3.2.2",
+    "jsonwebtoken": "^4.1.0",
     "koa": "^0.18.1",
-    "koa-bodyparser": "^1.2.0",
+    "koa-bodyparser": "^1.4.1",
     "koa-compress": "^1.0.7",
     "koa-cors": "0.0.14",
     "koa-helmet": "0.0.3",
@@ -29,7 +29,7 @@
     "uuid": "^2.0.1"
   },
   "devDependencies": {
-    "chai": "^2.1.0",
+    "chai": "^2.1.1",
     "co-mocha": "^1.0.1",
     "gulp": "^3.8.6",
     "gulp-docco": "0.0.4",
@@ -38,8 +38,8 @@
     "gulp-nodemon": "^1.0.4",
     "gulp-task-listing": "^1.0.0",
     "istanbul-harmony": "^0.3.0",
-    "mocha": "^2.0.1",
-    "sinon": "^1.10.3",
+    "mocha": "^2.2.1",
+    "sinon": "^1.13.0",
     "supertest": "^0.15.0"
   }
 }
