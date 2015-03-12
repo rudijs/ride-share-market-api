@@ -233,7 +233,7 @@ describe('users', function () {
 
         it('should 200 with JSON API format', function (done) {
           apiRequest
-            .get('/users/54f2f3066d392086c2e5220e')
+            .get('/users/550118cf8eae56f7c99faf4e')
             //.set('Content-Type', 'application/vnd.api+json')
             .set('Accept', 'application/vnd.api+json')
             .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiTmV0IENpdGl6ZW4iLCJpYXQiOjE0MDYyNjc1ODB9.nD4JZi4XRwT8eJcdHyc8Ut9vfjFAW_52teSfgL4EeKc')
@@ -255,7 +255,7 @@ describe('users', function () {
 
               // First element in the response array should be the requested user
               should.exist(jsonResponse.users[0]);
-              jsonResponse.users[0]._id.should.equal('54f2f3066d392086c2e5220e');
+              jsonResponse.users[0]._id.should.equal('550118cf8eae56f7c99faf4e');
 
               done();
             });

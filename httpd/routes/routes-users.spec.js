@@ -82,7 +82,7 @@ describe('User Routes', function () {
 
       it('should 200 return a user object for a valid request', function (done) {
         request(server)
-          .get('/users/54f2f3066d392086c2e5220e')
+          .get('/users/550118158eae56f7c99faf4d')
           .set('Authorization', 'Bearer ' + jwt)
           .expect(200)
           .end(function (err, res) {
@@ -96,7 +96,7 @@ describe('User Routes', function () {
 
             // first element in the response array should be the requested user
             should.exist(res.body.users[0]);
-            res.body.users[0]._id.should.equal('54f2f3066d392086c2e5220e');
+            res.body.users[0]._id.should.equal('550118158eae56f7c99faf4d');
 
             done();
           });

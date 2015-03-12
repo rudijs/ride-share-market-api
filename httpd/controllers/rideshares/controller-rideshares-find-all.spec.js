@@ -2,11 +2,14 @@
 
 var should = require('chai').should(),
   sinon = require('sinon'),
-  q = require('q');
+  q = require('q'),
+  fs = require('fs');
 
 var config = require('./../../../config/app'),
   rpcPublisher = require(config.get('root') + '/httpd/lib/rpc/rpc-publisher'),
   ridesharesFindAll = require('./controller-rideshares-find-all');
+
+var rideshareFixture = fs.readFileSync(config.get('root') + '/test/fixtures/rpc_response_rpc-rideshares.json').toString();
 
 describe('Controller Rideshares Find All', function () {
 
@@ -19,7 +22,12 @@ describe('Controller Rideshares Find All', function () {
 
   describe('RPC Success', function () {
 
+
     it('should return an array of Rideshares', function (done) {
+
+      sinon.stub(rpcPublisher, 'publish', function () {
+        return q.resolve(rideshareFixture);
+      });
 
       ridesharesFindAll().then(function ridesharesFindAllSuccess(res) {
         should.exist(res.rideshares);

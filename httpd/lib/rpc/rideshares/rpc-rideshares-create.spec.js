@@ -7,7 +7,8 @@ var should = require('chai').should(),
 
 var config = require('../../../../config/app'),
   rpcPublisher = require(config.get('root') + '/httpd/lib/rpc/rpc-publisher'),
-  rpcCreateRideshare = require('./rpc-rideshares-create');
+  rpcCreateRideshare = require('./rpc-rideshares-create'),
+  rpcRemoveRideshareById = require('./rpc-rideshares-remove-by-id');
 
 var rideshareFixture = fs.readFileSync(config.get('root') + '/test/fixtures/rideshare_2.json').toString();
 
@@ -31,8 +32,12 @@ describe('RPC Create Rideshare', function () {
     rpcCreateRideshare(rideshare).then(
       function rpcCreateRideshareSuccess(res) {
         should.exist(res.result._id);
+        return q.resolve(res.result._id);
       }
     )
+      .then(function(id) {
+        rpcRemoveRideshareById(id);
+      })
       .then(done, done);
 
   });

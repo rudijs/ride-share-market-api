@@ -43,9 +43,9 @@ describe('Controller Users Find', function () {
 
     it('should return a user found by ID', function (done) {
 
-      user.findById('54f2f3066d392086c2e5220e').then(function findByIdSuccess(res) {
+      user.findById('550118cf8eae56f7c99faf4e').then(function findByIdSuccess(res) {
         res.users.should.be.instanceof(Array);
-        res.users[0]._id.should.equal('54f2f3066d392086c2e5220e');
+        res.users[0]._id.should.equal('550118cf8eae56f7c99faf4e');
         should.exist(res.users[0].email);
       })
         .then(done, done);
