@@ -21,14 +21,24 @@ An error response may have one or more error objects with these properties:
 
 ## Dependencies
 
-    npm install -g gulp
+- `npm install -g gulp`
 
 ## Install
 
-    git clone git@github.com:rudijs/ride-share-market-api.git
-    cd ride-share-market-api
-    git fetch && git checkout develop
-    npm install
+- `git clone git@github.com:rudijs/ride-share-market-api.git`
+- `cd ride-share-market-api`
+- `git fetch && git checkout develop`
+- `npm install`
+
+## Configure
+
+- `gulp init`
+- Update the development and test .json files (ie. UPDATE-THIS-VALUE)
+- The MongoDB database needs a default user created
+- `mongo rsm-dev`
+- `db.users.insert({email: 'admin@ridesharemarket.local'})`
+- Copy the _id from the new user to [test/fixtures/user_id.txt](test/fixtures/user_id.txt)
+- `db.users.find()`
 
 ## Gulp Tasks
 

@@ -3,11 +3,14 @@
 var should = require('chai').should(),
   assert = require('chai').assert,
   sinon = require('sinon'),
-  q = require('q');
+  q = require('q'),
+  fs = require('fs');
 
 var config = require('./../../../config/app'),
   rpcUserFind = require(config.get('root') + '/httpd/lib/rpc/users/rpc-users-find'),
   user = require('./controller-users-find');
+
+var userIdFixture = fs.readFileSync(config.get('root') + '/test/fixtures/user_id.txt').toString();
 
 describe('Controller Users Find', function () {
 
@@ -43,9 +46,9 @@ describe('Controller Users Find', function () {
 
     it('should return a user found by ID', function (done) {
 
-      user.findById('550118cf8eae56f7c99faf4e').then(function findByIdSuccess(res) {
+      user.findById(userIdFixture).then(function findByIdSuccess(res) {
         res.users.should.be.instanceof(Array);
-        res.users[0]._id.should.equal('550118cf8eae56f7c99faf4e');
+        res.users[0]._id.should.equal(userIdFixture);
         should.exist(res.users[0].email);
       })
         .then(done, done);

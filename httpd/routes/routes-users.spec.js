@@ -7,7 +7,8 @@ var http = require('http'),
   assert = require('chai').assert,
   router = require('koa-router'),
   koa = require('koa'),
-  app = koa();
+  app = koa(),
+  fs = require('fs');
 
 app.use(function *(next) {
   try {
@@ -28,6 +29,8 @@ var config = require('./../../config/app'),
   jwt;
 
 var server = http.createServer(app.callback());
+
+var userIdFixture = fs.readFileSync(config.get('root') + '/test/fixtures/user_id.txt').toString();
 
 describe('User Routes', function () {
 
@@ -82,7 +85,7 @@ describe('User Routes', function () {
 
       it('should 200 return a user object for a valid request', function (done) {
         request(server)
-          .get('/users/550118158eae56f7c99faf4d')
+          .get('/users/' + userIdFixture)
           .set('Authorization', 'Bearer ' + jwt)
           .expect(200)
           .end(function (err, res) {
@@ -96,7 +99,7 @@ describe('User Routes', function () {
 
             // first element in the response array should be the requested user
             should.exist(res.body.users[0]);
-            res.body.users[0]._id.should.equal('550118158eae56f7c99faf4d');
+            res.body.users[0]._id.should.equal(userIdFixture);
 
             done();
           });
