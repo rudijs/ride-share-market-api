@@ -1,15 +1,18 @@
 'use strict';
 
-var config = require('../../config/app'),
-  request = require('supertest'),
+var request = require('supertest'),
   should = require('chai').should(),
   assert = require('chai').assert;
+
+var config = require('../../config/app'),
+  jwtManager = require(config.get('root') + '/httpd/lib/jwt/jwtManager'),
+  jwt = jwtManager.issueToken({name: 'Net Citizen'});
 
 console.log('http://' + config.get('app').hostname + ':' + config.get('app').port);
 
 var apiRequest = request('http://' + config.get('app').hostname + ':' + config.get('app').port);
 
-describe('users', function () {
+describe('Users', function () {
 
   describe('Authorized requests', function () {
 
@@ -17,69 +20,11 @@ describe('users', function () {
 
       describe('reject', function () {
 
-        //describe('content type header', function () {
-        //
-        //  it('should 400 requires content type header', function (done) {
-        //    apiRequest
-        //      .get('/users/539d77e8cd4e834b710a103a')
-        //      .expect('Content-Type', /application\/vnd\.api\+json/)
-        //      .expect(400)
-        //      .end(function (err, res) {
-        //        if (err) {
-        //          return done(err);
-        //        }
-        //
-        //        // Test: response is a collection of objects keyed by "errors"
-        //        res.text.should.match(/{"errors":\[{.*}/);
-        //
-        //        // Parse response test
-        //        var jsonResponse = JSON.parse(res.text);
-        //
-        //        should.exist(jsonResponse.errors);
-        //        assert.isArray(jsonResponse.errors, 'Top level response property should be an Array');
-        //
-        //        jsonResponse.errors[0].code.should.equal('invalid_request');
-        //        jsonResponse.errors[0].title.should.equal('API requires header "Content-type application/vnd.api+json" for exchanging data.');
-        //
-        //        done();
-        //      });
-        //  });
-        //
-        //  it('should 400 requires correct content type header', function (done) {
-        //    apiRequest
-        //      .get('/users/539d77e8cd4e834b710a103a')
-        //      .set('Content-Type', 'whatever-media-type')
-        //      .expect('Content-Type', /application\/vnd\.api\+json/)
-        //      .expect(400)
-        //      .end(function (err, res) {
-        //        if (err) {
-        //          return done(err);
-        //        }
-        //
-        //        // Test: response is a collection of objects keyed by "errors"
-        //        res.text.should.match(/{"errors":\[{.*}/);
-        //
-        //        // Parse response test
-        //        var jsonResponse = JSON.parse(res.text);
-        //
-        //        should.exist(jsonResponse.errors);
-        //        assert.isArray(jsonResponse.errors, 'Top level response property should be an Array');
-        //
-        //        jsonResponse.errors[0].code.should.equal('invalid_request');
-        //        jsonResponse.errors[0].title.should.equal('API requires header "Content-type application/vnd.api+json" for exchanging data.');
-        //
-        //        done();
-        //      });
-        //  });
-        //
-        //});
-
         describe('accept header', function () {
 
           it('should 400 requires accept header', function (done) {
             apiRequest
               .get('/users/539d77e8cd4e834b710a103a')
-              //.set('Content-Type', 'application/vnd.api+json')
               .expect('Content-Type', /application\/vnd\.api\+json/)
               .expect(400)
               .end(function (err, res) {
@@ -109,7 +54,6 @@ describe('users', function () {
           it('should 401 no authorization header', function (done) {
             apiRequest
               .get('/users/539d77e8cd4e834b710a103a')
-              //.set('Content-Type', 'application/vnd.api+json')
               .set('Accept', 'application/vnd.api+json')
               .expect('Content-Type', /application\/vnd\.api\+json/)
               .expect(401)
@@ -137,7 +81,6 @@ describe('users', function () {
           it('should 401 bad authorization header format', function (done) {
             apiRequest
               .get('/users/539d77e8cd4e834b710a103a')
-              //.set('Content-Type', 'application/vnd.api+json')
               .set('Accept', 'application/vnd.api+json')
               .set('Authorization', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiTmV0IENpdGl6ZW4iLCJpYXQiOjE0MDYyNjc1ODB9.nD4JZi4XRwT8eJcdHyc8Ut9vfjFAW_52teSfgL4EeKc')
               .expect('Content-Type', /application\/vnd\.api\+json/)
@@ -166,7 +109,6 @@ describe('users', function () {
           it('should 401 invalid JWT token', function (done) {
             apiRequest
               .get('/users/539d77e8cd4e834b710a103a')
-              //.set('Content-Type', 'application/vnd.api+json')
               .set('Accept', 'application/vnd.api+json')
               .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiTmV0IENpdGl6ZW4iLCJpYXQiOjE0MDYyNjc1ODB9.nD4JZi4XRwT8eJcdHyc8Ut9vfjFAW_52teSfgL4EeKb')
               .expect('Content-Type', /application\/vnd\.api\+json/)
@@ -201,7 +143,7 @@ describe('users', function () {
               .get('/users/123')
               .set('Content-Type', 'application/vnd.api+json')
               .set('Accept', 'application/vnd.api+json')
-              .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiTmV0IENpdGl6ZW4iLCJpYXQiOjE0MDYyNjc1ODB9.nD4JZi4XRwT8eJcdHyc8Ut9vfjFAW_52teSfgL4EeKc')
+              .set('Authorization', 'Bearer ' + jwt)
               .expect('Content-Type', /application\/vnd\.api\+json/)
               .expect(400)
               .end(function (err, res) {
@@ -233,10 +175,9 @@ describe('users', function () {
 
         it('should 200 with JSON API format', function (done) {
           apiRequest
-            .get('/users/550118cf8eae56f7c99faf4e')
-            //.set('Content-Type', 'application/vnd.api+json')
+            .get('/users/550299c24f39c192df4bc455')
             .set('Accept', 'application/vnd.api+json')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiTmV0IENpdGl6ZW4iLCJpYXQiOjE0MDYyNjc1ODB9.nD4JZi4XRwT8eJcdHyc8Ut9vfjFAW_52teSfgL4EeKc')
+            .set('Authorization', 'Bearer ' + jwt)
             .expect('Content-Type', /application\/vnd\.api\+json/)
             .expect(200)
             .end(function (err, res) {
@@ -255,7 +196,7 @@ describe('users', function () {
 
               // First element in the response array should be the requested user
               should.exist(jsonResponse.users[0]);
-              jsonResponse.users[0]._id.should.equal('550118cf8eae56f7c99faf4e');
+              jsonResponse.users[0]._id.should.equal('550299c24f39c192df4bc455');
 
               done();
             });
@@ -264,9 +205,8 @@ describe('users', function () {
         it('should 404 unknown user account', function (done) {
           apiRequest
             .get('/users/542ecc5738cd267f52ac2081')
-            //.set('Content-Type', 'application/vnd.api+json')
             .set('Accept', 'application/vnd.api+json')
-            .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiTmV0IENpdGl6ZW4iLCJpYXQiOjE0MDYyNjc1ODB9.nD4JZi4XRwT8eJcdHyc8Ut9vfjFAW_52teSfgL4EeKc')
+            .set('Authorization', 'Bearer ' + jwt)
             .expect('Content-Type', /application\/vnd\.api\+json/)
             .expect(404)
             .end(function (err, res) {

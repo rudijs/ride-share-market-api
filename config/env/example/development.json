@@ -3,6 +3,7 @@
     "hostname": "api01.dev.loc.ridesharemarket.com",
     "port": 3001
   },
+  "jwtTokenSecret": "UPDATE-THIS-VALUE",
   "messageQueue": {
     "rabbitmq": {
       "user": "rsm",
@@ -11,7 +12,6 @@
       "vhost": "/rsm"
     }
   },
-  "jwtTokenSecret": "UPDATE-THIS-VALUE",
   "oauth": {
     "protocol": "http://",
     "redirectUrl": {
