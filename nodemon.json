@@ -9,7 +9,7 @@
   ],
   "verbose": true,
   "execMap": {
-    "js": "node --harmony"
+    "js": "node"
   },
   "watch": [
     "server.js",

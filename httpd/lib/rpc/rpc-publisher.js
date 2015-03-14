@@ -1,6 +1,7 @@
 'use strict';
 
 var config = require('./../../../config/app'),
+  logger = require(config.get('root') + '/config/log'),
   rpcPublisherFactory = require('amqp-rpc-factory').publisher;
 
 function getRabbitmqUrl(config) {
@@ -13,7 +14,9 @@ var publisher = null;
 if (!publisher) {
   publisher = rpcPublisherFactory.create({
     url: getRabbitmqUrl(config),
-    queue: 'rpc_mongodb'
+    queue: 'rpc_mongodb',
+    logInfo: logger.info.bind(logger),
+    logError: logger.error.bind(logger)
   });
 }
 

@@ -12,7 +12,7 @@ var config = require('./../../../config/app'),
 var validateOauthCode = function validateOauthCode(code) {
   var deferred = Q.defer();
 
-  console.log('validateOauthCode', 'TODO better validate');
+  // TODO: better validatation
 
   if (!code) {
     deferred.reject('Missing require Oauth Code');

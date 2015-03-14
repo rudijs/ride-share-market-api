@@ -50,8 +50,6 @@ exports.resolveSuccess = function resolveSuccess(jsonRpc) {
     else {
       jsonRpc.error.data.map(function (error) {
 
-        console.log('555', error);
-
         // MongoDB validation errors will be an object with name, path, type
         // zSchema validation errors will be an object with path, message
 

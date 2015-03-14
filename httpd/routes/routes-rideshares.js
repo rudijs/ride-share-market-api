@@ -42,8 +42,6 @@ module.exports = function (app) {
    */
   app.post('/rideshares', auth(), function *() {
 
-    console.log('this.jwtToken', this.jwtToken.id);
-
     // curl -i -H 'Accept: application/vnd.api+json' -H 'Content-Type: application/vnd.api+json' --data '{"itinerary": { "route": [{"place": "Melbourne"},{"place": "Sydney"}],"type": "Wanted"}}' localhost:3001/rideshares
 
     var assert = require('assert'),
@@ -81,17 +79,12 @@ module.exports = function (app) {
       this.body = newRrideshare;
     }
     catch (e) {
-      console.log('e', e);
       this.throw(e.status, {message: {errors: e.errors}});
     }
 
   });
 
   app.del('/rideshares/:id', auth(), function *() {
-
-    console.log('this.jwtToken User ID', this.jwtToken.id);
-
-    console.log('del', this.params.id);
 
     // TODO: if the user owns the rideshare
     // TODO: delete rideshare

@@ -31,7 +31,6 @@ module.exports = function createRideshare(rideshare) {
       deferred.resolve({rideshares: [res]});
     },
     function jsonRpcResponseError(err) {
-      console.log(err);
       deferred.reject(err);
     }
   )
