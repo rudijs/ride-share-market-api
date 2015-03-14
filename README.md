@@ -21,7 +21,7 @@ An error response may have one or more error objects with these properties:
 
 ## Dependencies
 
-- `npm install -g gulp`
+- `npm install -g gulp pm2`
 
 ## Install
 
@@ -64,6 +64,23 @@ An error response may have one or more error objects with these properties:
 ## Manual
 
     curl -v  -H "Accept: application/vnd.api+json" -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiTmV0IENpdGl6ZW4iLCJpYXQiOjE0MDYyNjc1ODB9.nD4JZi4XRwT8eJcdHyc8Ut9vfjFAW_52teSfgL4EeKc" 127.0.0.1:3001/rideshares
+
+## Docker
+
+Build and run docker container locally.
+
+- `cd ride-share-market-api`
+- `mkdir -p "$(pwd)/tmp/log"`
+- `sudo chown rsm-data "$(pwd)/tmp/log"`
+- `sudo docker run -d --name rsm-api -v $(pwd)/tmp/log/:/srv/ride-share-market-api/log -p 3001:3001 -t rudijs/rsm-api:0.0.1`
+
+Build docker image locally, tag it, push it to the private docker registry.
+- `./docker-build.sh 0.0.2`
+
+Deploy on remote server.
+- `sudo docker pull 192.168.33.10:5000/rudijs/rsm-api:0.0.2`
+- `sudo docker rm -f rsm-api && sudo docker run -d --restart always --name rsm-api --cap-add SYS_PTRACE --security-opt apparmor:unconfined -v /srv/ride-share-market-api/log:/srv/ride-share-market-api/log -p 3001:3001 192.168.33.10:5000/rudijs/rsm-api:0.0.2`
+- Note: the *--cap-add SYS_PTRACE --security-opt apparmor:unconfined* flags above are required for pm2. See [here](https://github.com/Unitech/PM2/issues/1086)
 
 ### Patch for Solarized theme
 
