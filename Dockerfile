@@ -18,14 +18,14 @@ RUN apt-get -y install curl \
 && rm "iojs-v${IOJS_VERSION}-linux-x64.tar.gz" SHASUMS256.txt.asc
 
 # NPM package cache
-ENV NPM_REFRESHED_AT 2015-03-14.1
+ENV NPM_REFRESHED_AT 2015-03-18.1
 COPY package.json /tmp/package.json
 RUN cd /tmp \
 && npm install --production \
 && npm install -g pm2
 
 # Application
-ENV APP_REFRESHED_AT 2015-03-10.4
+ENV APP_REFRESHED_AT 2015-03-18.1
 ENV APP_DIR /srv/ride-share-market-api
 RUN mkdir ${APP_DIR} \
 && cp -a /tmp/node_modules/ ${APP_DIR} \
