@@ -20,9 +20,9 @@ RUN apt-get -y install curl \
 # NPM package cache
 ENV NPM_REFRESHED_AT 2015-03-14.1
 COPY package.json /tmp/package.json
-RUN npm install -g pm2 \
-&& cd /tmp \
-&& npm install
+RUN cd /tmp \
+&& npm install --production \
+&& npm install -g pm2
 
 # Application
 ENV APP_REFRESHED_AT 2015-03-10.4
