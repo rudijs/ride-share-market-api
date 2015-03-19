@@ -75,12 +75,15 @@ Build and run docker container locally.
 - `sudo docker run -d --name rsm-api -v $(pwd)/tmp/log/:/srv/ride-share-market-api/log -p 3001:3001 -t rudijs/rsm-api:0.0.1`
 
 Build docker image locally, tag it, push it to the private docker registry.
-- `./docker-build.sh 0.0.2`
+- `./docker-build.sh x.x.x`
 
 Deploy on remote server.
-- `sudo docker pull 192.168.33.10:5000/rudijs/rsm-api:0.0.2`
-- `sudo docker rm -f rsm-api && sudo docker run -d --restart always --name rsm-api --cap-add SYS_PTRACE --security-opt apparmor:unconfined -v /srv/ride-share-market-api/log:/srv/ride-share-market-api/log -p 3001:3001 192.168.33.10:5000/rudijs/rsm-api:0.0.2`
+- `sudo docker pull 192.168.33.10:5000/rudijs/rsm-api:x.x.x`
+- `sudo docker rm -f -v rsm-api && sudo docker run -d --restart always --name rsm-api --cap-add SYS_PTRACE --security-opt apparmor:unconfined -p 3001:3001 192.168.33.10:5000/rudijs/rsm-api:x.x.x`
 - Note: the *--cap-add SYS_PTRACE --security-opt apparmor:unconfined* flags above are required for pm2. See [here](https://github.com/Unitech/PM2/issues/1086)
+- Note: the docker container will export the application directory as a docker volume.
+- This data-volume is used by other containers (eg. logstash, nginx).
+
 
 ### Patch for Solarized theme
 
