@@ -13,21 +13,20 @@ var config = require('../config/app');
 
 module.exports = function (app) {
 
-  // A development mode delay to simulate internet latency
-
+  // A local environment delay to simulate internet latency
   function delay(milliseconds) {
     var deferred = Q.defer();
     setTimeout(deferred.resolve, milliseconds);
     return deferred.promise;
   }
 
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === 'loc') {
 
     var Q = require('q'),
       delayInterval = 750;
 
     app.use(function *(next) {
-      console.log(process.env.NODE_ENV + ' mode delay of ' + delayInterval + 'ms');
+      console.log(process.env.NODE_ENV + ' environment delay of ' + delayInterval + 'ms');
       yield delay(delayInterval); // Note: this yield has no useful return value
       yield next;
     });

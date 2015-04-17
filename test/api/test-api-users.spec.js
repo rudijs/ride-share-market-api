@@ -2,7 +2,8 @@
 
 var request = require('supertest'),
   should = require('chai').should(),
-  assert = require('chai').assert;
+  assert = require('chai').assert,
+  fs = require('fs');
 
 var config = require('../../config/app'),
   jwtManager = require(config.get('root') + '/httpd/lib/jwt/jwtManager'),
@@ -11,6 +12,8 @@ var config = require('../../config/app'),
 console.log('http://' + config.get('app').hostname + ':' + config.get('app').port);
 
 var apiRequest = request('http://' + config.get('app').hostname + ':' + config.get('app').port);
+
+var userIdFixture = fs.readFileSync(config.get('root') + '/test/fixtures/user_id.txt').toString();
 
 describe('Users', function () {
 
@@ -175,7 +178,7 @@ describe('Users', function () {
 
         it('should 200 with JSON API format', function (done) {
           apiRequest
-            .get('/users/550299c24f39c192df4bc455')
+            .get('/users/' + userIdFixture)
             .set('Accept', 'application/vnd.api+json')
             .set('Authorization', 'Bearer ' + jwt)
             .expect('Content-Type', /application\/vnd\.api\+json/)
@@ -196,7 +199,7 @@ describe('Users', function () {
 
               // First element in the response array should be the requested user
               should.exist(jsonResponse.users[0]);
-              jsonResponse.users[0]._id.should.equal('550299c24f39c192df4bc455');
+              jsonResponse.users[0]._id.should.equal(userIdFixture);
 
               done();
             });

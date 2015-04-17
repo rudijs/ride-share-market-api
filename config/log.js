@@ -1,6 +1,6 @@
 'use strict';
 
-var env = process.env.NODE_ENV = process.env.NODE_ENV || 'development',
+var env = process.env.NODE_ENV = process.env.NODE_ENV || 'loc',
   config = require('./app'),
   bunyan = require('bunyan');
 
