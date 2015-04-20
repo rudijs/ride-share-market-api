@@ -147,7 +147,7 @@ describe('Rideshares', function () {
             var result = JSON.parse(res.text);
             // TODO: should be to user/:id
             // {"meta":{"location":"/rideshares/user"}}
-            should.exist(result.meta.location)
+            should.exist(result.meta.location);
             done();
           });
 

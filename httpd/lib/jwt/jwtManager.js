@@ -8,7 +8,7 @@ module.exports.issueToken = function(payload) {
   return jwt.sign(payload, config.get('jwtTokenSecret'));
 };
 
-module.exports.verifyToken = function(token, cb) {
+module.exports.verifyToken = function(token) {
 
   return jwt.verify(token, config.get('jwtTokenSecret'));
 

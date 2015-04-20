@@ -35,7 +35,7 @@ An error response may have one or more error objects with these properties:
 - Update the development and test .json files (ie. UPDATE-THIS-VALUE)
 - The MongoDB database needs a default user created
 - `mongo rsm-dev`
-- `db.users.insert({email: 'admin@ridesharemarket.local'})`
+- `db.users.insert({"email": "net@citizen.com","currentProvider": "google","providers": {"google": {"displayName": "Net Citizen","url": "https://plus.google.com/103434308786179622443","image": {"url": "https://lh3.googleusercontent.com/photo.jpg?sz=50","isDefault": true}}}})`
 - Copy the _id from the new user to [test/fixtures/user_id.txt](test/fixtures/user_id.txt)
 - `db.users.find()`
 

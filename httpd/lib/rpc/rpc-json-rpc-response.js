@@ -56,7 +56,7 @@ exports.resolveSuccess = function resolveSuccess(jsonRpc) {
         var err = {
           code: jsonRpc.error.message,
           error: error
-        }
+        };
 
         if(error.name) {
           err.title = [camelCaseToWords(error.path), error.type].join(' is ');

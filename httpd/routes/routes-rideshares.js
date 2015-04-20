@@ -44,8 +44,8 @@ module.exports = function (app) {
 
     // curl -i -H 'Accept: application/vnd.api+json' -H 'Content-Type: application/vnd.api+json' --data '{"itinerary": { "route": [{"place": "Melbourne"},{"place": "Sydney"}],"type": "Wanted"}}' localhost:3001/rideshares
 
-    var assert = require('assert'),
-      q = require('q');
+    var assert = require('assert');
+      //q = require('q');
 
     function buildRideshare(userId, requestBody) {
 

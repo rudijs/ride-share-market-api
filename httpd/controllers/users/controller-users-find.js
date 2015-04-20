@@ -5,7 +5,8 @@ var assert = require('assert'),
 
 var config = require('./../../../config/app'),
   rpcUserFind = require(config.get('root') + '/httpd/lib/rpc/users/rpc-users-find'),
-  jsonRpcResponse = require(config.get('root') + '/httpd/lib/rpc/rpc-json-rpc-response');
+  jsonRpcResponse = require(config.get('root') + '/httpd/lib/rpc/rpc-json-rpc-response'),
+  formatUserResponse = require(config.get('root') + '/httpd/lib/users/format-user-response');
 
 var validateId = function validateId(id) {
   return /^[0-9a-fA-F]{24}$/.test(id);
@@ -47,7 +48,7 @@ var findById = function findById(id) {
   )
     .then(
     function jsonRpcResponseSuccess(res) {
-      deferred.resolve({users: res});
+      deferred.resolve({users: formatUserResponse(res)});
     },
     function jsonRpcResponseError(err) {
       deferred.reject(err);

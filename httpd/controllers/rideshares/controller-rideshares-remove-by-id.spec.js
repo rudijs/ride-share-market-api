@@ -1,7 +1,6 @@
 'use strict';
 
 var should = require('chai').should(),
-  assert = require('chai').assert,
   sinon = require('sinon'),
   q = require('q');
 
@@ -23,6 +22,7 @@ describe('Controller Rideshares Remove By ID', function () {
     it('should return 404 for an unknown Rideshare', function(done) {
 
       ridesharesRemoveById('546b769c7c5ae961209cd547').catch(function ridesharesRemoveByIdError(err) {
+        should.exist(err);
         err.status.should.equal(404);
         err.errors[0].code.should.equal('not_found');
         err.errors[0].title.should.equal('Rideshare not found.');

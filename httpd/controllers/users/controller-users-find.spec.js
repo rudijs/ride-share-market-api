@@ -49,7 +49,8 @@ describe('Controller Users Find', function () {
       user.findById(userIdFixture).then(function findByIdSuccess(res) {
         res.users.should.be.instanceof(Array);
         res.users[0]._id.should.equal(userIdFixture);
-        should.exist(res.users[0].email);
+        should.not.exist(res.users[0].email);
+        should.exist(res.users[0].displayName);
       })
         .then(done, done);
 

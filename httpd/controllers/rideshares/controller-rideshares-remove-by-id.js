@@ -25,7 +25,7 @@ module.exports = function removeRideshareById(id) {
     }
   )
     .then(
-    function jsonRpcResponseSuccess(res) {
+    function jsonRpcResponseSuccess() {
       // TODO: Log the ID of the removed Rideshare
       //deferred.resolve({data: res});
       deferred.resolve({
