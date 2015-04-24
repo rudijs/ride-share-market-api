@@ -64,7 +64,6 @@ function authorization() {
       yield next;
     }
     catch (e) {
-
       var unauthorizedErrorMessage = {
         message: {
           errors: [

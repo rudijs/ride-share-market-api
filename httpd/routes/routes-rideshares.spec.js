@@ -1,0 +1,166 @@
+'use strict';
+
+var http = require('http'),
+  request = require('supertest'),
+  should = require('chai').should(),
+  router = require('koa-router'),
+  koa = require('koa'),
+  koaJsonApiHeaders = require('koa-jsonapi-headers'),
+  bodyParser = require('koa-bodyparser'),
+  app = koa(),
+  fs = require('fs');
+
+var config = require('../../config/app'),
+  userIdFixture = fs.readFileSync(config.get('root') + '/test/fixtures/user_id.txt').toString(),
+  rideshareFixture = fs.readFileSync(config.get('root') + '/test/fixtures/rideshare_1.json').toString(),
+  jwtManager = require(config.get('root') + '/httpd/lib/jwt/jwtManager'),
+  jwt = jwtManager.issueToken({name: 'Net Citizen', id: userIdFixture}),
+  rideshareId;
+
+//setup error handling
+app.use(function *(next) {
+  try {
+    yield next;
+    this.response.type = 'application/vnd.api+json';
+  }
+  catch (err) {
+    this.status = err.status || 500;
+    this.body = err.message;
+    this.response.type = 'application/vnd.api+json';
+  }
+});
+
+app.use(koaJsonApiHeaders());
+
+app.use(bodyParser());
+
+//enable routing
+app.use(router(app));
+
+var server = http.createServer(app.callback());
+
+require('./routes-rideshares')(app);
+
+describe('Rideshare Routes', function () {
+
+  describe('POST', function() {
+
+    it('should 200 create a new rideshare', function(done) {
+
+      request(server)
+        .post('/rideshares')
+        .set('Accept', 'application/vnd.api+json')
+        .set('Content-Type', 'application/vnd.api+json')
+        .set('x-Authorization', 'Chops')
+        .set('Authorization', 'Bearer ' + jwt)
+        .send(rideshareFixture)
+        .expect('Content-Type', /application\/vnd\.api\+json/)
+        .expect(200)
+        .end(function (err, res) {
+          if (err) {
+            return done(err);
+          }
+
+          var result = JSON.parse(res.text);
+          result.rideshares.should.be.an.instanceof(Array);
+          result.rideshares[0]._id.length.should.equal(24);
+          // save the rideshare id for next tests
+          rideshareId = result.rideshares[0]._id;
+          done();
+        });
+
+    });
+
+  });
+
+  describe('GET', function() {
+
+    it('should 200 rideshares/:id', function (done) {
+      request(server)
+        .get('/rideshares/' + rideshareId)
+        .set('Accept', 'application/vnd.api+json')
+        .expect(200)
+        .end(function (err, res) {
+          if (err) {
+            should.not.exist(err);
+            return done(err);
+          }
+          res.text.should.match(/{"rideshares":\[{"_id":"/);
+          var result = JSON.parse(res.text);
+          result.rideshares.should.be.an.instanceof(Array);
+          result.rideshares.length.should.equal(1);
+          result.rideshares[0]._id.should.equal(rideshareId);
+          done();
+        });
+    });
+
+    it('should 200 rideshares', function (done) {
+      request(server)
+        .get('/rideshares')
+        .set('Accept', 'application/vnd.api+json')
+        .expect(200)
+        .end(function (err, res) {
+          if (err) {
+            should.not.exist(err);
+            return done(err);
+          }
+          res.text.should.match(/{"rideshares":\[{"_id":"/);
+          done();
+        });
+    });
+
+    it('should 404 rideshares/:id', function (done) {
+      request(server)
+        .get('/rideshares/553928038122fd0d0024bd11')
+        .set('Accept', 'application/vnd.api+json')
+        .expect(404)
+        .end(function (err, res) {
+          if (err) {
+            should.not.exist(err);
+            return done(err);
+          }
+          res.text.should.match(/{"errors":\[{"code":"not_found","title":"/);
+          done();
+
+        });
+    });
+
+  });
+
+  describe('DEL', function() {
+
+    it('should 200 delete a rideshare', function (done) {
+      request(server)
+        .del('/rideshares/' + rideshareId)
+        .set('Accept', 'application/vnd.api+json')
+        .set('Authorization', 'Bearer ' + jwt)
+        .expect(200)
+        .end(function (err, res) {
+          if (err) {
+            should.not.exist(err);
+            return done(err);
+          }
+          res.text.should.match(/{"meta":{"location":"/);
+          done();
+        });
+    });
+
+    it('should 404 unknown rideshare', function (done) {
+      request(server)
+        .del('/rideshares/553928038122fd0d0024bd11')
+        .set('Accept', 'application/vnd.api+json')
+        .set('Authorization', 'Bearer ' + jwt)
+        .expect(404)
+        .end(function (err, res) {
+          if (err) {
+            should.not.exist(err);
+            return done(err);
+          }
+          res.text.should.match(/{"errors":\[{"code":"not_found","title":"/);
+          done();
+        });
+    });
+
+  });
+
+});

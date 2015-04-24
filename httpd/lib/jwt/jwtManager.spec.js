@@ -26,6 +26,8 @@ describe('jwt Manager Test', function () {
 
   it('should handle verify token errors', function () {
 
+    var currentJwtTokenSecret = config.get('jwtTokenSecret');
+
     config.set('jwtTokenSecret', 'xxxyyyzzz');
 
     try {
@@ -33,6 +35,8 @@ describe('jwt Manager Test', function () {
     }
     catch (e) {
       e.message.should.match(/invalid\ signature/);
+      // reset jwtTokenSecret back to original for other tests.
+      config.set('jwtTokenSecret', currentJwtTokenSecret);
     }
 
   });

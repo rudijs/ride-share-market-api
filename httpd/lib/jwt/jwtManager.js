@@ -9,7 +9,5 @@ module.exports.issueToken = function(payload) {
 };
 
 module.exports.verifyToken = function(token) {
-
   return jwt.verify(token, config.get('jwtTokenSecret'));
-
 };

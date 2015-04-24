@@ -27,6 +27,7 @@ describe('Default Routes', function () {
         res.statusCode.should.equal(404);
         res.text.should.equal('<p>Page Not Found</p>');
         done();
+
       });
   });
 

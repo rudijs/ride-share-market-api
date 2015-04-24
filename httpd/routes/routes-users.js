@@ -7,7 +7,6 @@ var config = require('./../../config/app'),
 module.exports = function (app) {
 
   app.get('/users/:id', auth(), function *() {
-    //app.get('/users/:id', function *() {
 
     try {
       var user = yield usersController.findById(this.params.id);

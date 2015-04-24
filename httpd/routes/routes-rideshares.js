@@ -16,7 +16,6 @@ module.exports = function (app) {
       this.body = rideshares;
     }
     catch (e) {
-      //console.log('e', e);
       this.throw(e.status, {message: {errors: e.errors}});
     }
   });
@@ -31,7 +30,6 @@ module.exports = function (app) {
       this.body = rideshares;
     }
     catch (e) {
-      //console.log('e', e.errors);
       this.throw(e.status, {message: {errors: e.errors}});
     }
 
@@ -52,7 +50,6 @@ module.exports = function (app) {
       assert.equal(typeof (userId), 'string', 'argument userId must be a string');
       assert.equal(typeof (requestBody), 'object', 'argument requestBody must be an object');
 
-      //console.log('requestBody', requestBody);
       var rideshare = requestBody;
       // TODO: validate userId is active user
       rideshare.user = userId;
@@ -87,13 +84,12 @@ module.exports = function (app) {
   app.del('/rideshares/:id', auth(), function *() {
 
     // TODO: if the user owns the rideshare
-    // TODO: delete rideshare
+    // console.log('this.jwtToken', this.jwtToken);
 
     try {
       this.body = yield ridesharesController.removeById(this.params.id);
     }
     catch (e) {
-      //console.log('e', e);
       this.throw(e.status, {message: {errors: e.errors}});
     }
 
