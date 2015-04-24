@@ -3,6 +3,8 @@
 var http = require('http'),
   request = require('supertest'),
   should = require('chai').should(),
+  sinon = require('sinon'),
+  q = require('q'),
   router = require('koa-router'),
   koa = require('koa'),
   koaJsonApiHeaders = require('koa-jsonapi-headers'),
@@ -15,9 +17,11 @@ var config = require('../../config/app'),
   rideshareFixture = fs.readFileSync(config.get('root') + '/test/fixtures/rideshare_1.json').toString(),
   jwtManager = require(config.get('root') + '/httpd/lib/jwt/jwtManager'),
   jwt = jwtManager.issueToken({name: 'Net Citizen', id: userIdFixture}),
+  rpcPublisher = require(config.get('root') + '/httpd/lib/rpc/rpc-publisher'),
   rideshareId;
 
 //setup error handling
+//setup JSON API response header (this is handled by 'koa-json-logger' in live)
 app.use(function *(next) {
   try {
     yield next;
@@ -30,8 +34,10 @@ app.use(function *(next) {
   }
 });
 
+//setup JSON API
 app.use(koaJsonApiHeaders());
 
+//enable POST
 app.use(bodyParser());
 
 //enable routing
@@ -39,9 +45,17 @@ app.use(router(app));
 
 var server = http.createServer(app.callback());
 
+//routes to test
 require('./routes-rideshares')(app);
 
 describe('Rideshare Routes', function () {
+
+  afterEach(function (done) {
+    if (rpcPublisher.publish.restore) {
+      rpcPublisher.publish.restore();
+    }
+    done();
+  });
 
   describe('POST', function() {
 
@@ -105,6 +119,30 @@ describe('Rideshare Routes', function () {
             return done(err);
           }
           res.text.should.match(/{"rideshares":\[{"_id":"/);
+          done();
+        });
+    });
+
+    it('should 503 handle rideshares errors', function (done) {
+
+      sinon.stub(rpcPublisher, 'publish', function () {
+        return q.reject({
+          code: 503,
+          message: 'service_unavailable',
+          data: 'Service Unavailable'
+        });
+      });
+
+      request(server)
+        .get('/rideshares')
+        .set('Accept', 'application/vnd.api+json')
+        .expect(503)
+        .end(function (err, res) {
+          if (err) {
+            should.not.exist(err);
+            return done(err);
+          }
+          res.text.should.match(/{"errors":\[{"code":"service_unavailable","title":"Service\ Unavailable"}\]}/);
           done();
         });
     });
