@@ -8,8 +8,8 @@ var should = require('chai').should(),
 var config = require('../../../../config/app'),
   rpcPublisher = require(config.get('root') + '/httpd/lib/rpc/rpc-publisher'),
   rpcCreateRideshare = require('./rpc-rideshares-create'),
-  rpcFindAllRideshares = require('./rpc-rideshares-find-all'),
-  rpcRemoveRideshareById = require('./rpc-rideshares-remove-by-id');
+  rpcRemoveRideshareById = require('./rpc-rideshares-remove-by-id'),
+  rpcUpdateRideshare = require('./rpc-rideshares-update');
 
 var rideshareFixture = JSON.parse(fs.readFileSync(config.get('root') + '/test/fixtures/rideshare_1.json').toString()),
   userIdFixture = fs.readFileSync(config.get('root') + '/test/fixtures/user_id.txt').toString(),
@@ -19,7 +19,7 @@ rideshareFixture.user = userIdFixture;
 
 describe('RPC Rideshares', function () {
 
-  describe('Find All', function () {
+  describe('Update', function () {
 
     beforeEach(function (done) {
       rpcCreateRideshare(rideshareFixture).then(function (res) {
@@ -41,12 +41,16 @@ describe('RPC Rideshares', function () {
       });
     });
 
-    it('should return a result', function (done) {
+    it('should update an existing rideshare', function (done) {
 
-      return rpcFindAllRideshares().then(function (res) {
-        should.exist(res.result);
-        res.result.should.be.instanceof(Array);
-        res.result.length.should.not.equal(0);
+      should.exist(rpcUpdateRideshare);
+
+      // Update a rideshare property
+      rideshare.itinerary.type.should.equal('Wanted');
+      rideshare.itinerary.type = 'Offering';
+
+      rpcUpdateRideshare(rideshare).then(function (res) {
+        res.result.itinerary.type.should.equal('Offering');
       })
         .then(done, done);
 
@@ -58,7 +62,7 @@ describe('RPC Rideshares', function () {
         return q.reject({code: 503, message: 'Service Unavailable'});
       });
 
-      rpcFindAllRideshares().catch(function rpcFindAllRidesharesError(err) {
+      rpcUpdateRideshare(rideshare).catch(function rpcCreateRideshareError(err) {
         err.code.should.equal(503);
         err.message.should.equal('Service Unavailable');
       })

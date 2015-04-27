@@ -7,46 +7,67 @@ var should = require('chai').should(),
 
 var config = require('../../../../config/app'),
   rpcPublisher = require(config.get('root') + '/httpd/lib/rpc/rpc-publisher'),
+  rpcCreateRideshare = require('./rpc-rideshares-create'),
+  rpcRemoveRideshareById = require('./rpc-rideshares-remove-by-id'),
   rpcFindRideshareById = require('./rpc-rideshares-find-by-id');
 
-var rideshareFixture = fs.readFileSync(config.get('root') + '/test/fixtures/rpc_response_rpc-rideshares-find-by-id.json').toString();
+var rideshareFixture = JSON.parse(fs.readFileSync(config.get('root') + '/test/fixtures/rideshare_1.json').toString()),
+  userIdFixture = fs.readFileSync(config.get('root') + '/test/fixtures/user_id.txt').toString(),
+  rideshare;
 
-describe('RPC Find Rideshare By ID', function () {
+rideshareFixture.user = userIdFixture;
 
-  afterEach(function (done) {
-    if (rpcPublisher.publish.restore) {
-      rpcPublisher.publish.restore();
-    }
-    done();
-  });
+describe('RPC Rideshares', function () {
 
-  it('should return an array with one rideshare', function (done) {
+  describe('Find By ID', function () {
 
-    sinon.stub(rpcPublisher, 'publish', function () {
-      return q.resolve(rideshareFixture);
+    beforeEach(function (done) {
+      rpcCreateRideshare(rideshareFixture).then(function (res) {
+        rideshare = res.result;
+        done();
+      });
     });
 
-    rpcFindRideshareById('54f4136c64cb08491774eee0').then(function rpcFindRideshareByIdSuccess(res) {
-      should.exist(res.result);
-      res.result.should.be.instanceof(Array);
-      res.result.length.should.equal(1);
-      res.result[0]._id.should.equal('54f4136c64cb08491774eee0');
-    })
-      .then(done, done);
-
-  });
-
-  it('should handle publish errors', function (done) {
-
-    sinon.stub(rpcPublisher, 'publish', function () {
-      return q.reject({code: 503, message: 'Service Unavailable'});
+    afterEach(function (done) {
+      if (rpcPublisher.publish.restore) {
+        rpcPublisher.publish.restore();
+      }
+      done();
     });
 
-    rpcFindRideshareById('54449e565a2982eab34eb8e5').catch(function rpcFindAllRidesharesError(err) {
-      err.code.should.equal(503);
-      err.message.should.equal('Service Unavailable');
-    })
-      .then(done, done);
+    afterEach(function (done) {
+      rpcRemoveRideshareById(rideshare._id).then(function () {
+        done();
+      });
+    });
+
+    it('should return an array with one rideshare', function (done) {
+
+      should.exist(rpcFindRideshareById);
+
+      rpcFindRideshareById(rideshare._id).then(function (res) {
+        should.exist(res.result);
+        res.result.should.be.instanceof(Array);
+        res.result.length.should.equal(1);
+        res.result[0]._id.should.equal(rideshare._id);
+      })
+        .then(done, done);
+
+    });
+
+    it('should handle publish errors', function (done) {
+
+      sinon.stub(rpcPublisher, 'publish', function () {
+        return q.reject({code: 503, message: 'Service Unavailable'});
+      });
+
+      return rpcFindRideshareById(rideshare._id).catch(function (err) {
+        err.code.should.equal(503);
+        err.message.should.equal('Service Unavailable');
+      })
+        .then(done, done);
+    });
+
   });
 
 });

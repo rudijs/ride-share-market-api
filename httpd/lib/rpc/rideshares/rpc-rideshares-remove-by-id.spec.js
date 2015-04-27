@@ -2,45 +2,68 @@
 
 var should = require('chai').should(),
   sinon = require('sinon'),
-  q = require('q');
+  q = require('q'),
+  fs = require('fs');
 
 var config = require('../../../../config/app'),
   rpcPublisher = require(config.get('root') + '/httpd/lib/rpc/rpc-publisher'),
+  rpcCreateRideshare = require('./rpc-rideshares-create'),
   rpcRemoveRideshareById = require('./rpc-rideshares-remove-by-id');
 
-describe('RPC Remove Rideshare By ID', function() {
+var rideshareFixture = JSON.parse(fs.readFileSync(config.get('root') + '/test/fixtures/rideshare_1.json').toString()),
+  userIdFixture = fs.readFileSync(config.get('root') + '/test/fixtures/user_id.txt').toString(),
+  rideshare;
 
-  afterEach(function(done) {
-    if(rpcPublisher.publish.restore) {
-      rpcPublisher.publish.restore();
-    }
-    done();
-  });
+rideshareFixture.user = userIdFixture;
 
-  it('should successfully execute an JSON-RPC call', function(done) {
+describe('RPC Rideshares', function() {
 
-    rpcRemoveRideshareById('5469c666b207c9564a1d2632').then(function rpcRemoveRideshareByIdSuccess(res) {
-      res.jsonrpc.should.equal('2.0');
-      should.exist(res.id);
-      res.error.code.should.equal(404);
-      res.error.message.should.equal('not_found');
-      res.error.data.should.equal('Rideshare not found.');
-    })
-    .then(done,done);
+  describe.only('Remove By ID', function() {
 
-  });
-
-  it('should handle publish errors', function (done) {
-
-    sinon.stub(rpcPublisher, 'publish', function () {
-      return q.reject({code: 503, message: 'Service Unavailable'});
+    beforeEach(function (done) {
+      rpcCreateRideshare(rideshareFixture).then(function (res) {
+        rideshare = res.result;
+        done();
+      });
     });
 
-    rpcRemoveRideshareById('5469c666b207c9564a1d2632').catch(function rpcRemoveRideshareByIdError(err) {
-      err.code.should.equal(503);
-      err.message.should.equal('Service Unavailable');
-    })
-      .then(done, done);
+    afterEach(function (done) {
+      if (rpcPublisher.publish.restore) {
+        rpcPublisher.publish.restore();
+      }
+      done();
+    });
+
+    afterEach(function (done) {
+      rpcRemoveRideshareById(rideshare._id).then(function () {
+        done();
+      });
+    });
+
+    it('should remove a rideshare', function(done) {
+
+      should.exist(rpcRemoveRideshareById);
+
+      rpcRemoveRideshareById(rideshare._id).then(function rpcRemoveRideshareByIdSuccess(res) {
+        res.result.should.equal(rideshare._id);
+      })
+        .then(done,done);
+
+    });
+
+    it('should handle publish errors', function (done) {
+
+      sinon.stub(rpcPublisher, 'publish', function () {
+        return q.reject({code: 503, message: 'Service Unavailable'});
+      });
+
+      rpcRemoveRideshareById('5469c666b207c9564a1d2632').catch(function rpcRemoveRideshareByIdError(err) {
+        err.code.should.equal(503);
+        err.message.should.equal('Service Unavailable');
+      })
+        .then(done, done);
+    });
+
   });
 
 
