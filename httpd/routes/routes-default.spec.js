@@ -13,7 +13,7 @@ require('./routes-default')(app);
 
 var server = http.createServer(app.callback());
 
-describe.only('Default Routes', function () {
+describe('Default Routes', function () {
 
   describe('GET', function () {
 
