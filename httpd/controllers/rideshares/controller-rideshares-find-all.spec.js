@@ -11,17 +11,16 @@ var config = require('./../../../config/app'),
 
 var rideshareFixture = fs.readFileSync(config.get('root') + '/test/fixtures/rpc_response_rpc-rideshares.json').toString();
 
-describe('Controller Rideshares Find All', function () {
+describe('Controllers Rideshares', function () {
 
-  afterEach(function (done) {
-    if (rpcPublisher.publish.restore) {
-      rpcPublisher.publish.restore();
-    }
-    done();
-  });
+  describe('Find All', function () {
 
-  describe('RPC Success', function () {
-
+    afterEach(function (done) {
+      if (rpcPublisher.publish.restore) {
+        rpcPublisher.publish.restore();
+      }
+      done();
+    });
 
     it('should return an array of Rideshares', function (done) {
 
@@ -35,10 +34,6 @@ describe('Controller Rideshares Find All', function () {
       })
         .then(done, done);
     });
-
-  });
-
-  describe('RPC Error', function () {
 
     it('should handle RPC connections errors', function (done) {
 

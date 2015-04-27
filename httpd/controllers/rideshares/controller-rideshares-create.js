@@ -15,22 +15,22 @@ module.exports = function createRideshare(rideshare) {
 
   rpcCreateRideshare(rideshare)
     .then(
-    function rpcCreateRideshareSuccess(res) {
+    function (res) {
       // A successful JSON-RPC message may contain either result or error
       // Resolve (determine) the reply (result or error)
       return jsonRpcResponse.resolveSuccess(res);
 
     },
-    function rpcCreateRideshareError(err) {
+    function (err) {
       // Return JSON-API error object
       deferred.reject(jsonRpcResponse.resolveError(err));
     }
   )
     .then(
-    function jsonRpcResponseSuccess(res) {
+    function (res) {
       deferred.resolve({rideshares: [res]});
     },
-    function jsonRpcResponseError(err) {
+    function (err) {
       deferred.reject(err);
     }
   )

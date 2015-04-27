@@ -1,5 +1,6 @@
 'use strict';
 
+
 var should = require('chai').should(),
   assert = require('chai').assert,
   sinon = require('sinon'),
@@ -11,11 +12,14 @@ var config = require('./../../../config/app'),
   rideshareCreate = require('./controller-rideshares-create'),
   ridesharesRemoveById = require('./controller-rideshares-remove-by-id');
 
-var rideshareFixture = fs.readFileSync(config.get('root') + '/test/fixtures/rideshare_1.json').toString();
+var rideshareFixture = JSON.parse(fs.readFileSync(config.get('root') + '/test/fixtures/rideshare_1.json').toString()),
+  userIdFixture = fs.readFileSync(config.get('root') + '/test/fixtures/user_id.txt').toString();
 
-describe('Controller', function () {
+rideshareFixture.user = userIdFixture;
 
-  describe('Rideshare Create', function () {
+describe('Controllers Rideshares', function () {
+
+  describe('Create', function () {
 
     afterEach(function (done) {
       if (rpcPublisher.publish.restore) {
@@ -24,25 +28,24 @@ describe('Controller', function () {
       done();
     });
 
-    var rideshare = JSON.parse(rideshareFixture);
-    rideshare.user = '54354a2e1268cf741d84c3e8';
-
     it('should create a rideshare', function (done) {
-      rideshareCreate(rideshare).then(function rideshareCreateSuccess(res) {
+      return rideshareCreate(rideshareFixture).then(function (res) {
         assert.isArray(res.rideshares, 'Top level response property should be an Array');
         should.exist(res.rideshares[0]._id);
         return q.resolve(res.rideshares[0]._id);
       })
         .then(function (id) {
-          ridesharesRemoveById(id);
+          return ridesharesRemoveById(id);
         })
-        .then(done, done);
+        .then(function () {
+          done();
+        });
 
     });
 
     it('should handle validation errors', function (done) {
 
-      rideshareCreate({invalid: true}).catch(function rideshareCreateError(err) {
+      rideshareCreate({invalid: true}).catch(function (err) {
         err.status.should.equal(400);
         assert.isArray(err.errors, 'Errors property should be an Array');
         err.errors[0].code.should.equal('validation_error');
@@ -61,7 +64,7 @@ describe('Controller', function () {
         });
       });
 
-      rideshareCreate({}).catch(function rideshareCreateError(err) {
+      rideshareCreate({}).catch(function (err) {
         err.status.should.equal(503);
         err.errors[0].code.should.equal('service_unavailable');
         err.errors[0].title.should.equal('Service Unavailable');

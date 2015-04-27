@@ -11,14 +11,13 @@ var config = require('../../../../config/app'),
   rpcRemoveRideshareById = require('./rpc-rideshares-remove-by-id');
 
 var rideshareFixture = JSON.parse(fs.readFileSync(config.get('root') + '/test/fixtures/rideshare_1.json').toString()),
-  userIdFixture = fs.readFileSync(config.get('root') + '/test/fixtures/user_id.txt').toString(),
-  rideshare;
+  userIdFixture = fs.readFileSync(config.get('root') + '/test/fixtures/user_id.txt').toString();
 
 rideshareFixture.user = userIdFixture;
 
 describe('RPC Rideshares', function () {
 
-  describe.only('Create', function () {
+  describe('Create', function () {
 
     afterEach(function (done) {
       if (rpcPublisher.publish.restore) {
@@ -52,7 +51,7 @@ describe('RPC Rideshares', function () {
         return q.reject({code: 503, message: 'Service Unavailable'});
       });
 
-      rpcCreateRideshare(rideshare).catch(function rpcCreateRideshareError(err) {
+      rpcCreateRideshare(rideshareFixture).catch(function rpcCreateRideshareError(err) {
         err.code.should.equal(503);
         err.message.should.equal('Service Unavailable');
       })

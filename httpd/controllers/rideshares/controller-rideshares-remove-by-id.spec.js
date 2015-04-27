@@ -8,18 +8,18 @@ var config = require('./../../../config/app'),
   rpcPublisher = require(config.get('root') + '/httpd/lib/rpc/rpc-publisher'),
   ridesharesRemoveById = require('./controller-rideshares-remove-by-id');
 
-describe('Controller Rideshares Remove By ID', function () {
+describe('Controllers Rideshares', function () {
 
-  afterEach(function (done) {
-    if (rpcPublisher.publish.restore) {
-      rpcPublisher.publish.restore();
-    }
-    done();
-  });
+  describe('Remove By ID', function () {
 
-  describe('RPC Success', function () {
+    afterEach(function (done) {
+      if (rpcPublisher.publish.restore) {
+        rpcPublisher.publish.restore();
+      }
+      done();
+    });
 
-    it('should return 404 for an unknown Rideshare', function(done) {
+    it('should return 404 for an unknown Rideshare', function (done) {
 
       ridesharesRemoveById('546b769c7c5ae961209cd547').catch(function ridesharesRemoveByIdError(err) {
         should.exist(err);
@@ -27,13 +27,9 @@ describe('Controller Rideshares Remove By ID', function () {
         err.errors[0].code.should.equal('not_found');
         err.errors[0].title.should.equal('Rideshare not found.');
       })
-      .then(done, done);
+        .then(done, done);
 
     });
-
-  });
-
-  describe('RPC Error', function () {
 
     it('should handle RPC connections errors', function (done) {
 
@@ -55,6 +51,5 @@ describe('Controller Rideshares Remove By ID', function () {
     });
 
   });
-
 
 });

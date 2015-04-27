@@ -18,7 +18,7 @@ rideshareFixture.user = userIdFixture;
 
 describe('RPC Rideshares', function() {
 
-  describe.only('Remove By ID', function() {
+  describe('Remove By ID', function() {
 
     beforeEach(function (done) {
       rpcCreateRideshare(rideshareFixture).then(function (res) {
