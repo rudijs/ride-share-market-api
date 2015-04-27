@@ -10,11 +10,15 @@ var config = require('../../../../config/app'),
   rpcCreateRideshare = require('./rpc-rideshares-create'),
   rpcRemoveRideshareById = require('./rpc-rideshares-remove-by-id');
 
-var rideshareFixture = fs.readFileSync(config.get('root') + '/test/fixtures/rideshare_2.json').toString();
+var rideshareFixture = JSON.parse(fs.readFileSync(config.get('root') + '/test/fixtures/rideshare_1.json').toString()),
+  userIdFixture = fs.readFileSync(config.get('root') + '/test/fixtures/user_id.txt').toString(),
+  rideshare;
+
+rideshareFixture.user = userIdFixture;
 
 describe('RPC Rideshares', function () {
 
-  describe('Create', function () {
+  describe.only('Create', function () {
 
     afterEach(function (done) {
       if (rpcPublisher.publish.restore) {
@@ -23,16 +27,12 @@ describe('RPC Rideshares', function () {
       done();
     });
 
-    var rideshare = JSON.parse(rideshareFixture);
-
-    rideshare.user = '54354a2e1268cf741d84c3e8';
-
     it('should create a new rideshare', function (done) {
 
       should.exist(rpcCreateRideshare);
 
-      rpcCreateRideshare(rideshare).then(
-        function rpcCreateRideshareSuccess(res) {
+      rpcCreateRideshare(rideshareFixture).then(
+        function (res) {
           should.exist(res.result._id);
           return q.resolve(res.result._id);
         }
