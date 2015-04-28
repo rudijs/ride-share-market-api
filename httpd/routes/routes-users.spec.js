@@ -32,77 +32,81 @@ var server = http.createServer(app.callback());
 
 var userIdFixture = fs.readFileSync(config.get('root') + '/test/fixtures/user_id.txt').toString();
 
-describe('User Routes', function () {
+describe('Routes', function () {
 
-  describe('GET /users/:id', function () {
+  describe('User', function () {
 
-    describe('unauthenticated', function () {
+    describe('GET /users/:id', function () {
 
-      it('should 401 reject without authorization', function (done) {
-        request(server)
-          .get('/users/539d77e8cd4e834b710a103a')
-          .expect(401)
-          .end(function (err, res) {
-            if (err) {
-              should.not.exist(err);
-              return done(err);
-            }
+      describe('unauthenticated', function () {
 
-            assert.isArray(res.body.errors, 'Top level response property should be an Array');
-            res.body.errors[0].code.should.equal('invalid_request');
-            res.body.errors[0].title.should.equal('Authorization header not found');
+        it('should 401 reject without authorization', function (done) {
+          request(server)
+            .get('/users/539d77e8cd4e834b710a103a')
+            .expect(401)
+            .end(function (err, res) {
+              if (err) {
+                should.not.exist(err);
+                return done(err);
+              }
 
-            done();
-          });
+              assert.isArray(res.body.errors, 'Top level response property should be an Array');
+              res.body.errors[0].code.should.equal('invalid_request');
+              res.body.errors[0].title.should.equal('Authorization header not found');
+
+              done();
+            });
+        });
+
       });
 
-    });
+      describe('authenticated', function () {
 
-    describe('authenticated', function () {
+        beforeEach(function (done) {
+          jwt = jwtManager.issueToken({name: 'Test'});
+          done();
+        });
 
-      beforeEach(function (done) {
-        jwt = jwtManager.issueToken({name: 'Test'});
-        done();
-      });
+        it('should 400 reject non-valid userID parameter', function (done) {
+          request(server)
+            .get('/users/abc123')
+            .set('Authorization', 'Bearer ' + jwt)
+            .expect(400)
+            .end(function (err, res) {
+              if (err) {
+                return done(err);
+              }
 
-      it('should 400 reject non-valid userID parameter', function (done) {
-        request(server)
-          .get('/users/abc123')
-          .set('Authorization', 'Bearer ' + jwt)
-          .expect(400)
-          .end(function (err, res) {
-            if (err) {
-              return done(err);
-            }
+              assert.isArray(res.body.errors, 'Top level response property should be an Array');
+              res.body.errors[0].code.should.equal('invalid_format');
+              res.body.errors[0].title.should.equal('Invalid user ID format.');
 
-            assert.isArray(res.body.errors, 'Top level response property should be an Array');
-            res.body.errors[0].code.should.equal('invalid_format');
-            res.body.errors[0].title.should.equal('Invalid user ID format.');
+              done();
+            });
+        });
 
-            done();
-          });
-      });
+        it('should 200 return a user object for a valid request', function (done) {
+          request(server)
+            .get('/users/' + userIdFixture)
+            .set('Authorization', 'Bearer ' + jwt)
+            .expect(200)
+            .end(function (err, res) {
+              if (err) {
+                return done(err);
+              }
 
-      it('should 200 return a user object for a valid request', function (done) {
-        request(server)
-          .get('/users/' + userIdFixture)
-          .set('Authorization', 'Bearer ' + jwt)
-          .expect(200)
-          .end(function (err, res) {
-            if (err) {
-              return done(err);
-            }
+              // array response
+              should.exist(res.body.users);
+              assert.isArray(res.body.users, 'Top level response property should be an Array');
 
-            // array response
-            should.exist(res.body.users);
-            assert.isArray(res.body.users, 'Top level response property should be an Array');
+              // first element in the response array should be the requested user
+              should.exist(res.body.users[0]);
+              res.body.users[0]._id.should.equal(userIdFixture);
 
-            // first element in the response array should be the requested user
-            should.exist(res.body.users[0]);
-            res.body.users[0]._id.should.equal(userIdFixture);
+              done();
+            });
+        });
 
-            done();
-          });
       });
 
     });
