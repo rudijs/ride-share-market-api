@@ -6,9 +6,6 @@ var config = require('./../../config/app'),
 
 module.exports = function (app) {
 
-  /**
-   * GET All Rideshares
-   */
   app.get('/rideshares', function *() {
 
     try {
@@ -20,9 +17,6 @@ module.exports = function (app) {
     }
   });
 
-  /**
-   * GET Rideshare by id
-   */
   app.get('/rideshares/:id', function *() {
 
     try {
@@ -35,9 +29,6 @@ module.exports = function (app) {
 
   });
 
-  /**
-   * POST Create Rideshare
-   */
   app.post('/rideshares', auth(), function *() {
 
     // curl -i -H 'Accept: application/vnd.api+json' -H 'Content-Type: application/vnd.api+json' --data '{"itinerary": { "route": [{"place": "Melbourne"},{"place": "Sydney"}],"type": "Wanted"}}' localhost:3001/rideshares
@@ -54,6 +45,7 @@ module.exports = function (app) {
       // TODO: validate userId is active user
       rideshare.user = userId;
       return rideshare;
+
       //return q.reject({
       //    status: 400,
       //    errors: [
@@ -74,6 +66,23 @@ module.exports = function (app) {
       var newRrideshare = yield ridesharesController.create(rideshare);
 
       this.body = newRrideshare;
+    }
+    catch (e) {
+      this.throw(e.status, {message: {errors: e.errors}});
+    }
+
+  });
+
+  app.put('/rideshares/:id', auth(), function *() {
+
+    try {
+
+      // TODO: validate user is owner
+      // TODO: validate body
+
+      var result = yield ridesharesController.update(this.request.body);
+
+      this.body = result;
     }
     catch (e) {
       this.throw(e.status, {message: {errors: e.errors}});
