@@ -1,7 +1,6 @@
 'use strict';
 
 var should = require('chai').should(),
-  assert = require('chai').assert,
   sinon = require('sinon'),
   q = require('q'),
   fs = require('fs');
@@ -46,12 +45,12 @@ describe('Controllers Rideshares', function () {
 
       sinon.stub(rpcPublisher, 'publish', function () {
         return q.resolve(JSON.stringify({
-          jsonrpc: "2.0",
-          id: "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+          jsonrpc: '2.0',
+          id: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
           error: {
             code: 404,
-            message: "not_found",
-            data: "Rideshare not found."
+            message: 'not_found',
+            data: 'Rideshare not found.'
           }
         }));
       });
