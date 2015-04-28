@@ -1,6 +1,5 @@
 'use strict';
 
-
 var should = require('chai').should(),
   assert = require('chai').assert,
   sinon = require('sinon'),
