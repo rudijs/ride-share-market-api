@@ -19,7 +19,7 @@ var server = http.createServer(app.callback());
 
 describe('Routes', function() {
 
-  describe.only('Auth', function () {
+  describe('Auth', function () {
 
     afterEach(function () {
       // Restore sinon stubs
@@ -79,7 +79,7 @@ describe('Routes', function() {
       it('should redirect to an application error page if authController.googleCallback errors', function(done) {
 
         sinon.stub(authController, 'googleCallback', function* () {
-          throw new Error('Oops!');
+          yield new Error('Oops!');
         });
 
         request(server)
