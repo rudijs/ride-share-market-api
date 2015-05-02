@@ -16,59 +16,63 @@ var rideshareFixture = JSON.parse(fs.readFileSync(config.get('root') + '/test/fi
 
 rideshareFixture.user = userIdFixture;
 
-describe('Controllers Rideshares', function () {
+describe('Controllers', function () {
 
-  describe('Create', function () {
+  describe('Rideshares', function () {
 
-    afterEach(function (done) {
-      if (rpcPublisher.publish.restore) {
-        rpcPublisher.publish.restore();
-      }
-      done();
-    });
+    describe('Create', function () {
 
-    it('should create a rideshare', function (done) {
-      return rideshareCreate(rideshareFixture).then(function (res) {
-        assert.isArray(res.rideshares, 'Top level response property should be an Array');
-        should.exist(res.rideshares[0]._id);
-        return q.resolve(res.rideshares[0]._id);
-      })
-        .then(function (id) {
-          return ridesharesRemoveById(id);
-        })
-        .then(function () {
-          done();
-        });
-
-    });
-
-    it('should handle validation errors', function (done) {
-
-      rideshareCreate({invalid: true}).catch(function (err) {
-        err.status.should.equal(400);
-        assert.isArray(err.errors, 'Errors property should be an Array');
-        err.errors[0].code.should.equal('validation_error');
-      })
-        .then(done, done);
-
-    });
-
-    it('should handle RPC connections errors', function (done) {
-
-      sinon.stub(rpcPublisher, 'publish', function () {
-        return q.reject({
-          code: 503,
-          message: 'service_unavailable',
-          data: 'Service Unavailable'
-        });
+      afterEach(function (done) {
+        if (rpcPublisher.publish.restore) {
+          rpcPublisher.publish.restore();
+        }
+        done();
       });
 
-      rideshareCreate({}).catch(function (err) {
-        err.status.should.equal(503);
-        err.errors[0].code.should.equal('service_unavailable');
-        err.errors[0].title.should.equal('Service Unavailable');
-      })
-        .then(done, done);
+      it('should create a rideshare', function (done) {
+        return rideshareCreate(rideshareFixture).then(function (res) {
+          assert.isArray(res.rideshares, 'Top level response property should be an Array');
+          should.exist(res.rideshares[0]._id);
+          return q.resolve(res.rideshares[0]._id);
+        })
+          .then(function (id) {
+            return ridesharesRemoveById(id);
+          })
+          .then(function () {
+            done();
+          });
+
+      });
+
+      it('should handle validation errors', function (done) {
+
+        rideshareCreate({invalid: true}).catch(function (err) {
+          err.status.should.equal(400);
+          assert.isArray(err.errors, 'Errors property should be an Array');
+          err.errors[0].code.should.equal('validation_error');
+        })
+          .then(done, done);
+
+      });
+
+      it('should handle RPC connections errors', function (done) {
+
+        sinon.stub(rpcPublisher, 'publish', function () {
+          return q.reject({
+            code: 503,
+            message: 'service_unavailable',
+            data: 'Service Unavailable'
+          });
+        });
+
+        rideshareCreate({}).catch(function (err) {
+          err.status.should.equal(503);
+          err.errors[0].code.should.equal('service_unavailable');
+          err.errors[0].title.should.equal('Service Unavailable');
+        })
+          .then(done, done);
+
+      });
 
     });
 

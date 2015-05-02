@@ -12,66 +12,71 @@ var config = require('./../../../config/app'),
 
 var userIdFixture = fs.readFileSync(config.get('root') + '/test/fixtures/user_id.txt').toString();
 
-describe('Controller Users Find', function () {
 
-  describe('By ID', function () {
+describe('Controllers', function () {
 
-    afterEach(function (done) {
-      if (rpcUserFind.findById.restore) {
-        rpcUserFind.findById.restore();
-      }
-      done();
-    });
+  describe('Users', function () {
 
-    it('should reject invalid user ID', function (done) {
-      user.findById('abc123').catch(function findByIdError(err) {
-        err.status.should.equal(400);
-        assert.isArray(err.errors, 'Top level response property should be an Array');
-        err.errors[0].code.should.equal('invalid_format');
-        err.errors[0].title.should.equal('Invalid user ID format.');
-      })
-        .then(done, done);
-    });
+    describe('Find By ID', function () {
 
-    it('should handle user not found', function (done) {
-
-      user.findById('242ecc5738cd267f52ac2084').catch(function findByIdError(err) {
-        err.status.should.equal(404);
-        assert.isArray(err.errors, 'Top level response property should be an Array');
-        err.errors[0].code.should.equal('not_found');
-        err.errors[0].title.should.equal('Account profile not found.');
-      })
-        .then(done, done);
-    });
-
-    it('should return a user found by ID', function (done) {
-
-      user.findById(userIdFixture).then(function findByIdSuccess(res) {
-        res.users.should.be.instanceof(Array);
-        res.users[0]._id.should.equal(userIdFixture);
-        should.not.exist(res.users[0].email);
-        should.exist(res.users[0].displayName);
-      })
-        .then(done, done);
-
-    });
-
-    it('should handle publish errors', function(done) {
-
-      sinon.stub(rpcUserFind, 'findById', function () {
-        return q.reject({
-          code: 503,
-          message: 'service_unavailable',
-          data: 'Service Unavailable'
-        });
+      afterEach(function (done) {
+        if (rpcUserFind.findById.restore) {
+          rpcUserFind.findById.restore();
+        }
+        done();
       });
 
-      user.findById('542ecc5738cd267f52ac2084').catch(function findByIdError(err) {
-        err.status.should.equal(503);
-        err.errors[0].code.should.equal('service_unavailable');
-        err.errors[0].title.should.equal('Service Unavailable');
-      })
-        .then(done, done);
+      it('should reject invalid user ID', function (done) {
+        user.findById('abc123').catch(function findByIdError(err) {
+          err.status.should.equal(400);
+          assert.isArray(err.errors, 'Top level response property should be an Array');
+          err.errors[0].code.should.equal('invalid_format');
+          err.errors[0].title.should.equal('Invalid user ID format.');
+        })
+          .then(done, done);
+      });
+
+      it('should handle user not found', function (done) {
+
+        user.findById('242ecc5738cd267f52ac2084').catch(function findByIdError(err) {
+          err.status.should.equal(404);
+          assert.isArray(err.errors, 'Top level response property should be an Array');
+          err.errors[0].code.should.equal('not_found');
+          err.errors[0].title.should.equal('Account profile not found.');
+        })
+          .then(done, done);
+      });
+
+      it('should return a user found by ID', function (done) {
+
+        user.findById(userIdFixture).then(function findByIdSuccess(res) {
+          res.users.should.be.instanceof(Array);
+          res.users[0]._id.should.equal(userIdFixture);
+          should.not.exist(res.users[0].email);
+          should.exist(res.users[0].displayName);
+        })
+          .then(done, done);
+
+      });
+
+      it('should handle publish errors', function(done) {
+
+        sinon.stub(rpcUserFind, 'findById', function () {
+          return q.reject({
+            code: 503,
+            message: 'service_unavailable',
+            data: 'Service Unavailable'
+          });
+        });
+
+        user.findById('542ecc5738cd267f52ac2084').catch(function findByIdError(err) {
+          err.status.should.equal(503);
+          err.errors[0].code.should.equal('service_unavailable');
+          err.errors[0].title.should.equal('Service Unavailable');
+        })
+          .then(done, done);
+      });
+
     });
 
   });

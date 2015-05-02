@@ -15,74 +15,79 @@ var rideshareFixture = JSON.parse(fs.readFileSync(config.get('root') + '/test/fi
 
 rideshareFixture.user = userIdFixture;
 
-describe('Controllers Rideshares', function () {
+describe('Controllers', function () {
 
-  describe('Update', function () {
+  describe('Rideshares', function () {
 
-    afterEach(function (done) {
-      if (rpcPublisher.publish.restore) {
-        rpcPublisher.publish.restore();
-      }
-      done();
-    });
+    describe('Update', function () {
 
-    it('should return a Rideshares JSON-RPC response', function (done) {
-
-      sinon.stub(rpcPublisher, 'publish', function () {
-        return q.resolve(rpcResult);
+      afterEach(function (done) {
+        if (rpcPublisher.publish.restore) {
+          rpcPublisher.publish.restore();
+        }
+        done();
       });
 
-      rideshareUpdate(rideshareFixture).then(function (res) {
-        should.exist(res.rideshares);
-        res.rideshares.should.be.instanceof(Array);
-        res.rideshares.length.should.equal(1);
-      })
-        .then(done, done);
+      it('should return a Rideshares JSON-RPC response', function (done) {
 
-    });
-
-    it('should handle RPC response errors', function (done) {
-
-      sinon.stub(rpcPublisher, 'publish', function () {
-        return q.resolve(JSON.stringify({
-          jsonrpc: '2.0',
-          id: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
-          error: {
-            code: 404,
-            message: 'not_found',
-            data: 'Rideshare not found.'
-          }
-        }));
-      });
-
-      rideshareUpdate(rideshareFixture).catch(function (err) {
-        err.status.should.equal(404);
-        err.errors[0].code.should.equal('not_found');
-        err.errors[0].title.should.equal('Rideshare not found.');
-      })
-        .then(done, done);
-
-    });
-
-    it('should handle RPC connections errors', function (done) {
-
-      sinon.stub(rpcPublisher, 'publish', function () {
-        return q.reject({
-          code: 503,
-          message: 'service_unavailable',
-          data: 'Service Unavailable'
+        sinon.stub(rpcPublisher, 'publish', function () {
+          return q.resolve(rpcResult);
         });
+
+        rideshareUpdate(rideshareFixture).then(function (res) {
+          should.exist(res.rideshares);
+          res.rideshares.should.be.instanceof(Array);
+          res.rideshares.length.should.equal(1);
+        })
+          .then(done, done);
+
       });
 
-      rideshareUpdate(rideshareFixture).catch(function (err) {
-        err.status.should.equal(503);
-        err.errors[0].code.should.equal('service_unavailable');
-        err.errors[0].title.should.equal('Service Unavailable');
-      })
-        .then(done, done);
+      it('should handle RPC response errors', function (done) {
+
+        sinon.stub(rpcPublisher, 'publish', function () {
+          return q.resolve(JSON.stringify({
+            jsonrpc: '2.0',
+            id: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+            error: {
+              code: 404,
+              message: 'not_found',
+              data: 'Rideshare not found.'
+            }
+          }));
+        });
+
+        rideshareUpdate(rideshareFixture).catch(function (err) {
+          err.status.should.equal(404);
+          err.errors[0].code.should.equal('not_found');
+          err.errors[0].title.should.equal('Rideshare not found.');
+        })
+          .then(done, done);
+
+      });
+
+      it('should handle RPC connections errors', function (done) {
+
+        sinon.stub(rpcPublisher, 'publish', function () {
+          return q.reject({
+            code: 503,
+            message: 'service_unavailable',
+            data: 'Service Unavailable'
+          });
+        });
+
+        rideshareUpdate(rideshareFixture).catch(function (err) {
+          err.status.should.equal(503);
+          err.errors[0].code.should.equal('service_unavailable');
+          err.errors[0].title.should.equal('Service Unavailable');
+        })
+          .then(done, done);
+
+      });
 
     });
 
   });
+
 
 });

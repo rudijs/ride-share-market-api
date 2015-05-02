@@ -11,46 +11,50 @@ var config = require('./../../../config/app'),
 
 var rideshareFixture = fs.readFileSync(config.get('root') + '/test/fixtures/rpc_response_rpc-rideshares.json').toString();
 
-describe('Controllers Rideshares', function () {
+describe('Controllers', function () {
 
-  describe('Find All', function () {
+  describe('Rideshares', function () {
 
-    afterEach(function (done) {
-      if (rpcPublisher.publish.restore) {
-        rpcPublisher.publish.restore();
-      }
-      done();
-    });
+    describe('Find All', function () {
 
-    it('should return an array of Rideshares', function (done) {
-
-      sinon.stub(rpcPublisher, 'publish', function () {
-        return q.resolve(rideshareFixture);
+      afterEach(function (done) {
+        if (rpcPublisher.publish.restore) {
+          rpcPublisher.publish.restore();
+        }
+        done();
       });
 
-      ridesharesFindAll().then(function ridesharesFindAllSuccess(res) {
-        should.exist(res.rideshares);
-        res.rideshares.should.be.an.instanceof(Array);
-      })
-        .then(done, done);
-    });
+      it('should return an array of Rideshares', function (done) {
 
-    it('should handle RPC connections errors', function (done) {
-
-      sinon.stub(rpcPublisher, 'publish', function () {
-        return q.reject({
-          code: 503,
-          message: 'service_unavailable',
-          data: 'Service Unavailable'
+        sinon.stub(rpcPublisher, 'publish', function () {
+          return q.resolve(rideshareFixture);
         });
+
+        ridesharesFindAll().then(function ridesharesFindAllSuccess(res) {
+          should.exist(res.rideshares);
+          res.rideshares.should.be.an.instanceof(Array);
+        })
+          .then(done, done);
       });
 
-      ridesharesFindAll().catch(function ridesharesFindAllError(err) {
-        err.status.should.equal(503);
-        err.errors[0].code.should.equal('service_unavailable');
-        err.errors[0].title.should.equal('Service Unavailable');
-      })
-        .then(done, done);
+      it('should handle RPC connections errors', function (done) {
+
+        sinon.stub(rpcPublisher, 'publish', function () {
+          return q.reject({
+            code: 503,
+            message: 'service_unavailable',
+            data: 'Service Unavailable'
+          });
+        });
+
+        ridesharesFindAll().catch(function ridesharesFindAllError(err) {
+          err.status.should.equal(503);
+          err.errors[0].code.should.equal('service_unavailable');
+          err.errors[0].title.should.equal('Service Unavailable');
+        })
+          .then(done, done);
+
+      });
 
     });
 
