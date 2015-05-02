@@ -34,7 +34,7 @@ var userIdFixture = fs.readFileSync(config.get('root') + '/test/fixtures/user_id
 
 describe('Routes', function () {
 
-  describe('User', function () {
+  describe('Users', function () {
 
     describe('GET /users/:id', function () {
 
