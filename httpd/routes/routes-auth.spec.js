@@ -79,7 +79,7 @@ describe('Routes', function() {
       it('should redirect to an application error page if authController.googleCallback errors', function(done) {
 
         sinon.stub(authController, 'googleCallback', function* () {
-          yield new Error('Oops!');
+          yield new Error('Oops! Something blew up.');
         });
 
         request(server)
