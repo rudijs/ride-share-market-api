@@ -17,6 +17,7 @@ var config = require('../../config/app'),
   rideshareFixture = fs.readFileSync(config.get('root') + '/test/fixtures/rideshare_1.json').toString(),
   jwtManager = require(config.get('root') + '/httpd/lib/jwt/jwtManager'),
   jwt = jwtManager.issueToken({name: 'Net Citizen', id: userIdFixture}),
+  jwt2 = jwtManager.issueToken({name: 'Net Citizen 2', id: '5530c570a59afc0d00d9cfdd'}),
   rpcPublisher = require(config.get('root') + '/httpd/lib/rpc/rpc-publisher'),
   rideshare;
 
@@ -197,6 +198,22 @@ describe('Routes', function() {
     });
 
     describe('DEL', function() {
+
+      it('should 401 reject non owner delete rideshare request', function (done) {
+        request(server)
+          .del('/rideshares/' + rideshare._id)
+          .set('Accept', 'application/vnd.api+json')
+          .set('Authorization', 'Bearer ' + jwt2)
+          .expect(401)
+          .end(function (err, res) {
+            if (err) {
+              should.not.exist(err);
+              return done(err);
+            }
+            res.text.should.match(/{"errors":\[{"code":"authorization_required"/);
+            done();
+          });
+      });
 
       it('should 200 delete a rideshare', function (done) {
         request(server)

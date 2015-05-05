@@ -2,7 +2,8 @@
 
 var config = require('./../../config/app'),
   auth = require(config.get('root') + '/httpd/middlewares/authorization'),
-  ridesharesController = require(config.get('root') + '/httpd/controllers/rideshares');
+  ridesharesController = require(config.get('root') + '/httpd/controllers/rideshares'),
+  userPolicy = require(config.get('root') + '/httpd/lib/users/users-policy');
 
 module.exports = function (app) {
 
@@ -92,10 +93,24 @@ module.exports = function (app) {
 
   app.del('/rideshares/:id', auth(), function *() {
 
-    // TODO: if the user owns the rideshare
-    // console.log('this.jwtToken', this.jwtToken);
-
     try {
+
+      // 1st fetch the item to be removed
+      var rideshares = yield ridesharesController.findById(this.params.id);
+
+      // 2nd validate the requester is the owner
+      if(!userPolicy.isOwner(this.jwtToken.id, rideshares.rideshares[0])) {
+        this.throw(401, {
+            errors: [
+              {
+                code: 'authorization_required',
+                title: 'Please sign in to complete this request.'
+              }
+            ]
+        });
+      }
+
+      // 3rd delete
       this.body = yield ridesharesController.removeById(this.params.id);
     }
     catch (e) {
