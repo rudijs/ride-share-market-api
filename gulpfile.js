@@ -2,6 +2,7 @@
   'use strict';
 
   var gulp = require('gulp'),
+    args = require('yargs').argv,
     taskListing = require('gulp-task-listing'),
     fs = require('fs'),
     nodemon = require('gulp-nodemon'),
@@ -53,6 +54,12 @@
   });
 
   gulp.task('serve', function () {
+
+    // If --devdelay arg add environment variable for koa.js
+    if (args.devdelay) {
+      nodemonConfig.env.DEV_DELAY = true;
+    }
+
     nodemon(nodemonConfig)
       .on('restart', function () {
         console.log('restarted!');

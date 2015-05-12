@@ -20,13 +20,14 @@ module.exports = function (app) {
     return deferred.promise;
   }
 
-  if (process.env.NODE_ENV === 'loc') {
+  // Optionally add Development delay (simulate real time web lag)
+  if (process.env.DEV_DELAY) {
 
     var Q = require('q'),
       delayInterval = 750;
 
     app.use(function *(next) {
-      console.log(process.env.NODE_ENV + ' environment delay of ' + delayInterval + 'ms');
+      console.log('Development environment delay of ' + delayInterval + 'ms');
       yield delay(delayInterval); // Note: this yield has no useful return value
       yield next;
     });

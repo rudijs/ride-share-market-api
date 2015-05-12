@@ -41,29 +41,32 @@ An error response may have one or more error objects with these properties:
 
 ## Gulp Tasks
 
-    gulp help
+- `gulp help`
 
 ## Unit Tests
 
-    gulp test
-
-    gulp watch-test
+- `gulp test`
+- `gulp watch-test`
 
 ## Run dev server
 
-    gulp serve
+- No delay
+- `gulp serve`
+- 750ms delay
+- `gulp serve --devdelay`
+    
 
 ## API Tests (requires a running server)
 
-    gulp test-api
+- `gulp test-api`
 
 ## Development Tools
 
-    gulp watch-lint
+- `gulp watch-lint`
 
 ## Manual
 
-    curl -v  -H "Accept: application/vnd.api+json" -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiTmV0IENpdGl6ZW4iLCJpYXQiOjE0MDYyNjc1ODB9.nD4JZi4XRwT8eJcdHyc8Ut9vfjFAW_52teSfgL4EeKc" 127.0.0.1:3001/rideshares
+- `curl -v  -H "Accept: application/vnd.api+json" -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiTmV0IENpdGl6ZW4iLCJpYXQiOjE0MDYyNjc1ODB9.nD4JZi4XRwT8eJcdHyc8Ut9vfjFAW_52teSfgL4EeKc" 127.0.0.1:3001/rideshares`
 
 ## Docker
 
