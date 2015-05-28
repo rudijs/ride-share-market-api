@@ -45,7 +45,7 @@ describe('RPC Rideshares', function() {
       should.exist(rpcRemoveRideshareById);
 
       rpcRemoveRideshareById(rideshare._id).then(function rpcRemoveRideshareByIdSuccess(res) {
-        res.result.should.equal(rideshare._id);
+        res.result._id.should.equal(rideshare._id);
       })
         .then(done,done);
 

@@ -5,7 +5,7 @@ var http = require('http'),
   should = require('chai').should(),
   sinon = require('sinon'),
   q = require('q'),
-  router = require('koa-router'),
+  router = require('koa-router')(),
   koa = require('koa'),
   koaJsonApiHeaders = require('koa-jsonapi-headers'),
   bodyParser = require('koa-bodyparser'),
@@ -41,13 +41,17 @@ app.use(koaJsonApiHeaders());
 //enable POST
 app.use(bodyParser());
 
+//routes to test
+require('./routes-rideshares')(router);
+
 //enable routing
-app.use(router(app));
+app
+  .use(router.routes())
+  .use(router.allowedMethods());
 
 var server = http.createServer(app.callback());
 
-//routes to test
-require('./routes-rideshares')(app);
+
 
 describe('Routes', function() {
 

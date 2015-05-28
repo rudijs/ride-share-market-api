@@ -5,17 +5,18 @@ var config = require('./../../config/app'),
   googleSignInUrl = require(config.get('root') + '/httpd/lib/oauth/lib-oauth-google-url')(),
   authController = require(config.get('root') + '/httpd/controllers/auth/controller-auth');
 
-module.exports = function (app) {
+//module.exports = function (app) {
+module.exports = function (router) {
 
   /*
    Auth route here.
    */
-  app.get('/signin/google', function *signinGoogle(next) {
+  router.get('/signin/google', function *signinGoogle(next) {
     this.redirect(googleSignInUrl);
     yield next;
   });
 
-  app.get('/auth/google/callback', function *(next) {
+  router.get('/auth/google/callback', function *(next) {
 
     /*
      signin at google

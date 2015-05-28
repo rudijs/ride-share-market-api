@@ -5,7 +5,7 @@ var http = require('http'),
   request = require('supertest'),
   should = require('chai').should(),
   assert = require('chai').assert,
-  router = require('koa-router'),
+  router = require('koa-router')(),
   koa = require('koa'),
   app = koa(),
   fs = require('fs');
@@ -20,9 +20,11 @@ app.use(function *(next) {
   }
 });
 
-app.use(router(app));
+require('./routes-users')(router);
 
-require('./routes-users')(app);
+app
+  .use(router.routes())
+  .use(router.allowedMethods());
 
 var config = require('./../../config/app'),
   jwtManager = require(config.get('root') + '/httpd/lib/jwt/jwtManager'),

@@ -2,7 +2,7 @@
 
 var helmet = require('koa-helmet'),
   compress = require('koa-compress'),
-  router = require('koa-router'),
+  router = require('koa-router')(),
   cors = require('koa-cors'),
   requireWalk = require('require-walk'),
   koaJsonLogger = require('koa-json-logger'),
@@ -66,7 +66,9 @@ module.exports = function (app) {
 
   app.use(koaJsonApiHeaders({excludeList: [
     'signin\/google',
-    'auth\/google\/callback'
+    'auth\/google\/callback',
+    'signin\/facebook',
+    'auth\/facebook\/callback'
   ]}));
 
   app.use(compress());
@@ -82,9 +84,16 @@ module.exports = function (app) {
 
   app.use(responseTime);
 
-  app.use(router(app));
+  //app.use(router(app));
 
   // Routes
-  requireWalk(config.get('root') + '/httpd/routes')(app);
+  requireWalk(config.get('root') + '/httpd/routes')(router);
+
+  app
+    .use(router.routes())
+    .use(router.allowedMethods());
+
+  // Default Routes
+  requireWalk(config.get('root') + '/httpd/routes-default')(app);
 
 };

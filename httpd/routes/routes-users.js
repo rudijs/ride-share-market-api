@@ -4,9 +4,9 @@ var config = require('./../../config/app'),
   usersController = require(config.get('root') + '/httpd/controllers/users/controller-users-find'),
   auth = require(config.get('root') + '/httpd/middlewares/authorization');
 
-module.exports = function (app) {
+module.exports = function (router) {
 
-  app.get('/users/:id', auth(), function *() {
+  router.get('/users/:id', auth(), function *() {
 
     try {
       var user = yield usersController.findById(this.params.id);

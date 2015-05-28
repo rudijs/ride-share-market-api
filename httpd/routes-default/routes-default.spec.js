@@ -3,11 +3,8 @@
 var http = require('http'),
   request = require('supertest'),
   should = require('chai').should(),
-  router = require('koa-router'),
   koa = require('koa'),
   app = koa();
-
-app.use(router(app));
 
 require('./routes-default')(app);
 

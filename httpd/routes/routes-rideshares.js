@@ -5,9 +5,9 @@ var config = require('./../../config/app'),
   ridesharesController = require(config.get('root') + '/httpd/controllers/rideshares'),
   userPolicy = require(config.get('root') + '/httpd/lib/users/users-policy');
 
-module.exports = function (app) {
+module.exports = function (router) {
 
-  app.get('/rideshares', function *() {
+  router.get('/rideshares', function *() {
 
     try {
       var rideshares = yield ridesharesController.findAll();
@@ -18,7 +18,7 @@ module.exports = function (app) {
     }
   });
 
-  app.get('/rideshares/:id', function *() {
+  router.get('/rideshares/:id', function *() {
 
     try {
       var rideshares = yield ridesharesController.findById(this.params.id);
@@ -30,7 +30,7 @@ module.exports = function (app) {
 
   });
 
-  app.post('/rideshares', auth(), function *() {
+  router.post('/rideshares', auth(), function *() {
 
     // curl -i -H 'Accept: application/vnd.api+json' -H 'Content-Type: application/vnd.api+json' --data '{"itinerary": { "route": [{"place": "Melbourne"},{"place": "Sydney"}],"type": "Wanted"}}' localhost:3001/rideshares
 
@@ -74,7 +74,7 @@ module.exports = function (app) {
 
   });
 
-  app.put('/rideshares/:id', auth(), function *() {
+  router.put('/rideshares/:id', auth(), function *() {
 
     try {
 
@@ -91,7 +91,7 @@ module.exports = function (app) {
 
   });
 
-  app.del('/rideshares/:id', auth(), function *() {
+  router.del('/rideshares/:id', auth(), function *() {
 
     try {
 
