@@ -15,11 +15,31 @@ module.exports = function rpcUserSignIn(provider, oAuthUser) {
   var deferred = q.defer();
 
   // Currently Google Plus only
-  var user = {
-    email: oAuthUser.emails[0].value,
-    provider: provider,
-    profile: oAuthUser
+  //var user = {
+  //  email: oAuthUser.emails[0].value,
+  //  provider: provider,
+  //  profile: oAuthUser
+  //};
+
+  var userFilter = {
+    google: function(oAuthUser) {
+      return {
+        email: oAuthUser.emails[0].value,
+        provider: provider,
+        profile: oAuthUser
+      };
+    },
+    facebook: function(oAuthUser) {
+      return {
+        email: oAuthUser.email,
+        provider: provider,
+        profile: oAuthUser
+      };
+    }
+
   };
+
+  var user = userFilter[provider](oAuthUser);
 
   var jsonRpcMessage = rpcBuildJsonRpcRequest({
     method: 'user.signIn',

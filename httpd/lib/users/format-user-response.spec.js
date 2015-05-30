@@ -12,8 +12,10 @@ describe('Format User Reponse', function () {
 
   it('should format and restrict user response properties', function (done) {
     var user = formatUserResponse(userFixture);
-    should.exist(user[0]._id);
-    should.not.exist(user[0].email);
+    should.exist(user._id);
+    user.providers.should.be.instanceof(Array);
+    should.exist(user.providers[0].google);
+    should.exist(user.providers[1].facebook);
     done();
   });
 

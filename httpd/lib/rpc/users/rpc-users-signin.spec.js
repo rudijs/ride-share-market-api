@@ -68,4 +68,51 @@ describe('RPC User Sign In', function () {
 
   });
 
+  describe('FaceBook Oauth', function () {
+
+    var user = {
+      id: '1601459773473363',
+      email: 'net@citizen.com',
+      first_name: 'Net',
+      gender: 'male',
+      last_name: 'Citizen',
+      link: 'https://www.facebook.com/app_scoped_user_id/1601459773473363/',
+      locale: 'en_US',
+      name: 'Net Citizen',
+      timezone: 8,
+      updated_time: '2015-05-28T15:48:57+0000',
+      verified: true
+    };
+
+    it('should publish a JSON-RPC user.signin message and return the result', function (done) {
+
+      should.exist(rpcUserSignIn);
+
+      sinon.stub(rpcPublisher, 'publish', function (json) {
+        var jsonRpc = JSON.parse(json);
+
+        jsonRpc.jsonrpc.should.equal('2.0');
+        (typeof (jsonRpc.id)).should.be.a('string');
+        jsonRpc.method.should.equal('user.signIn');
+        jsonRpc.params.should.be.an('object');
+
+        var result = JSON.stringify({
+            result: {
+              email: user.email
+            }
+          }
+        );
+
+        return q.resolve(result);
+      });
+
+      rpcUserSignIn('facebook', user).then(function rpcUserSignInSuccess(res) {
+        res.email.should.equal(user.email);
+      })
+        .then(done, done);
+
+    });
+
+  });
+
 });

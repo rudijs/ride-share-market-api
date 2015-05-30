@@ -28,6 +28,7 @@ describe('Controllers', function () {
 
       it('should reject invalid user ID', function (done) {
         user.findById('abc123').catch(function findByIdError(err) {
+          should.exist(err);
           err.status.should.equal(400);
           assert.isArray(err.errors, 'Top level response property should be an Array');
           err.errors[0].code.should.equal('invalid_format');
@@ -50,10 +51,8 @@ describe('Controllers', function () {
       it('should return a user found by ID', function (done) {
 
         user.findById(userIdFixture).then(function findByIdSuccess(res) {
-          res.users.should.be.instanceof(Array);
-          res.users[0]._id.should.equal(userIdFixture);
-          should.not.exist(res.users[0].email);
-          should.exist(res.users[0].displayName);
+          res.users._id.should.equal(userIdFixture);
+          res.users.providers.should.be.instanceof(Array);
         })
           .then(done, done);
 

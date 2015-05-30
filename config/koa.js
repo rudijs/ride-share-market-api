@@ -87,13 +87,10 @@ module.exports = function (app) {
   //app.use(router(app));
 
   // Routes
-  requireWalk(config.get('root') + '/httpd/routes')(router);
+  requireWalk(config.get('root') + '/httpd/routes')(router, app);
 
   app
     .use(router.routes())
     .use(router.allowedMethods());
-
-  // Default Routes
-  requireWalk(config.get('root') + '/httpd/routes-default')(app);
 
 };

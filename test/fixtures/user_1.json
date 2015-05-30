@@ -29,6 +29,19 @@
         "isPlusUser": true,
         "circledByCount": 1,
         "verified": false
+      },
+      "facebook": {
+        "verified": false,
+        "updated_time": "2015-05-03T05:43:38+0000",
+        "timezone": 8,
+        "name": "Net Citizen",
+        "locale": "en_US",
+        "link": "https://www.facebook.com/app_scoped_user_id/265849783331351/",
+        "last_name": "Citizen",
+        "gender": "male",
+        "first_name": "net",
+        "email": "net@citizen.com",
+        "id": "265849783331351"
       }
     },
     "__v": 0

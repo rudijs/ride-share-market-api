@@ -19,136 +19,140 @@ var getOauthTokenTokens = {
   expiry_date: 1409501865230
 };
 
-describe('Lib Oauth Google', function () {
+describe('Oauth', function () {
 
-  afterEach(function (done) {
+  describe('Google', function () {
 
-    // Restore sinon stubs
-    if (OAuth2.prototype.getToken.restore) {
-      OAuth2.prototype.getToken.restore();
-    }
-    if (google.plus.restore) {
-      google.plus.restore();
-    }
-    done();
-  });
+    afterEach(function (done) {
 
-  describe('reject', function () {
-
-    it('should reject missing oauth code', function (done) {
-
-      return oauthGoogle()
-        .catch(function (err) {
-          err.should.equal('Missing require Oauth Code');
-        })
-        .then(done, done);
-
+      // Restore sinon stubs
+      if (OAuth2.prototype.getToken.restore) {
+        OAuth2.prototype.getToken.restore();
+      }
+      if (google.plus.restore) {
+        google.plus.restore();
+      }
+      done();
     });
 
-    it('should reject invalid oauth code', function (done) {
+    describe('reject', function () {
 
-      return oauthGoogle()
-        .catch(function (err) {
-          err.should.equal('Missing require Oauth Code');
-        })
-        .then(done, done);
+      it('should reject missing oauth code', function (done) {
 
-    });
+        return oauthGoogle()
+          .catch(function (err) {
+            err.should.equal('Missing require Oauth Code');
+          })
+          .then(done, done);
 
-    it('should handle get Oauth Token rejection', function (done) {
-
-      sinon.stub(OAuth2.prototype, 'getToken', function (code, callback) {
-        callback('invalid_grant');
       });
 
-      return oauthGoogle('abc123abc123abc123abc123abc123abc123')
-        .catch(function (err) {
-          err.should.equal('invalid_grant');
-        })
-        .then(done, done);
+      it('should reject invalid oauth code', function (done) {
 
-    });
+        return oauthGoogle()
+          .catch(function (err) {
+            err.should.equal('Missing require Oauth Code');
+          })
+          .then(done, done);
 
-    it('should handle get Google Plus User errors', function (done) {
-
-      sinon.stub(OAuth2.prototype, 'getToken', function (code, callback) {
-        callback(null, getOauthTokenTokens);
       });
 
-      // Google error response
-      var googleErrorResponse = {
-        errors: [
-          {
-            domain: 'global',
-            reason: 'authError',
-            message: 'Invalid Credentials',
-            locationType: 'header',
-            location: 'Authorization'
-          }],
-        code: 401,
-        message: 'Invalid Credentials'
-      };
+      it('should handle get Oauth Token rejection', function (done) {
 
-      sinon.stub(google, 'plus').returns({
-        people: {
-          get: function (obj, callback) {
-            callback(googleErrorResponse);
+        sinon.stub(OAuth2.prototype, 'getToken', function (code, callback) {
+          callback('invalid_grant');
+        });
+
+        return oauthGoogle('abc123abc123abc123abc123abc123abc123')
+          .catch(function (err) {
+            err.should.equal('invalid_grant');
+          })
+          .then(done, done);
+
+      });
+
+      it('should handle get Google Plus User errors', function (done) {
+
+        sinon.stub(OAuth2.prototype, 'getToken', function (code, callback) {
+          callback(null, getOauthTokenTokens);
+        });
+
+        // Google error response
+        var googleErrorResponse = {
+          errors: [
+            {
+              domain: 'global',
+              reason: 'authError',
+              message: 'Invalid Credentials',
+              locationType: 'header',
+              location: 'Authorization'
+            }],
+          code: 401,
+          message: 'Invalid Credentials'
+        };
+
+        sinon.stub(google, 'plus').returns({
+          people: {
+            get: function (obj, callback) {
+              callback(googleErrorResponse);
+            }
           }
-        }
-      });
+        });
 
-      return oauthGoogle('abc123abc123abc123abc123abc123abc123')
-        .catch(function (err) {
-          err.should.equal(googleErrorResponse);
-        })
-        .then(done, done);
+        return oauthGoogle('abc123abc123abc123abc123abc123abc123')
+          .catch(function (err) {
+            err.should.equal(googleErrorResponse);
+          })
+          .then(done, done);
+
+      });
 
     });
 
-  });
+    describe('accept', function () {
 
-  describe('accept', function () {
+      it('should return a google plus user object', function (done) {
 
-    it('should return a google plus user object', function (done) {
+        sinon.stub(OAuth2.prototype, 'getToken', function (code, callback) {
+          callback(null, getOauthTokenTokens);
+        });
 
-      sinon.stub(OAuth2.prototype, 'getToken', function (code, callback) {
-        callback(null, getOauthTokenTokens);
-      });
+        // Google plus user
+        var user = {
+          kind: 'plus#person',
+          etag: '"pNz5TVTpPz2Rn5Xw8UrubkkbOJ0/8wII0zxjh6EMZTkJA--p6DSI-wX"',
+          gender: 'male',
+          emails: [{value: 'net@citizen.com', type: 'account'}],
+          objectType: 'person',
+          id: '109515962716719253613',
+          displayName: 'Net Citizen',
+          name: {familyName: 'Citizen', givenName: 'Net'},
+          url: 'https://plus.google.com/109511962727719553613',
+          image: {
+            url: 'https://lh3.googleusercontent.com/-eLAFwuSEM2x/AAAAAAAAAAI/AAAAAAAAACg/dWlcwoWU533/photo.jpg?sz=50',
+            isDefault: false
+          },
+          isPlusUser: true,
+          circledByCount: 8,
+          verified: false
+        };
 
-      // Google plus user
-      var user = {
-        kind: 'plus#person',
-        etag: '"pNz5TVTpPz2Rn5Xw8UrubkkbOJ0/8wII0zxjh6EMZTkJA--p6DSI-wX"',
-        gender: 'male',
-        emails: [{value: 'net@citizen.com', type: 'account'}],
-        objectType: 'person',
-        id: '109515962716719253613',
-        displayName: 'Net Citizen',
-        name: {familyName: 'Citizen', givenName: 'Net'},
-        url: 'https://plus.google.com/109511962727719553613',
-        image: {
-          url: 'https://lh3.googleusercontent.com/-eLAFwuSEM2x/AAAAAAAAAAI/AAAAAAAAACg/dWlcwoWU533/photo.jpg?sz=50',
-          isDefault: false
-        },
-        isPlusUser: true,
-        circledByCount: 8,
-        verified: false
-      };
-
-      sinon.stub(google, 'plus').returns({
-        people: {
-          get: function (obj, callback) {
-            callback(null, user);
+        sinon.stub(google, 'plus').returns({
+          people: {
+            get: function (obj, callback) {
+              callback(null, user);
+            }
           }
-        }
-      });
+        });
 
-      return oauthGoogle('abc123abc123abc123abc123abc123abc123')
-        .then(function (res) {
-          should.exist(res);
-          res.should.equal(user);
-        })
-        .then(done, done);
+        return oauthGoogle('abc123abc123abc123abc123abc123abc123')
+          .then(function (res) {
+            should.exist(res);
+            res.should.equal(user);
+          })
+          .then(done, done);
+
+      });
 
     });
 

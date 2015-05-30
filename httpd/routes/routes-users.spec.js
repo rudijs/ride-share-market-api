@@ -99,11 +99,11 @@ describe('Routes', function () {
 
               // array response
               should.exist(res.body.users);
-              assert.isArray(res.body.users, 'Top level response property should be an Array');
+              assert.isObject(res.body.users, 'Top level response property should be an Object');
 
               // first element in the response array should be the requested user
-              should.exist(res.body.users[0]);
-              res.body.users[0]._id.should.equal(userIdFixture);
+              should.exist(res.body.users._id);
+              res.body.users._id.should.equal(userIdFixture);
 
               done();
             });

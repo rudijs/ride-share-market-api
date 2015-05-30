@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function (app) {
+module.exports = function (router, app) {
 
   // Custom 404 page
   app.use(function *pageNotFound(next) {

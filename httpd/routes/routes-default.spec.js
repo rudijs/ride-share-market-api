@@ -6,7 +6,7 @@ var http = require('http'),
   koa = require('koa'),
   app = koa();
 
-require('./routes-default')(app);
+require('./routes-default')(null, app);
 
 var server = http.createServer(app.callback());
 
