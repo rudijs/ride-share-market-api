@@ -7,7 +7,8 @@ var config = require('./../../../config/app'),
   oauthGoogle = require(config.get('root') + '/httpd/lib/oauth/lib-oauth-google'),
   oauthFacebook = require(config.get('root') + '/httpd/lib/oauth/lib-oauth-facebook'),
   rpcUserSignIn = require(config.get('root') + '/httpd/lib/rpc/users/rpc-users-signin'),
-  jwtManager = require(config.get('root') + '/httpd/lib/jwt/jwtManager');
+  jwtManager = require(config.get('root') + '/httpd/lib/jwt/jwtManager'),
+  timing = require(config.get('root') + '/httpd/lib/metrics/timing');
 
 /**
  * Signin at google
@@ -21,6 +22,8 @@ var config = require('./../../../config/app'),
 exports.googleCallback = function *googleCallback(code) {
 
   assert.equal(typeof (code), 'string', 'argument code must be a string');
+
+  var metrics = timing(Date.now());
 
   try {
 
@@ -46,12 +49,14 @@ exports.googleCallback = function *googleCallback(code) {
       token
     ].join('');
 
+    metrics('controllers.auth.google.resolve', Date.now());
     return redirectUrl;
 
   }
   catch (err) {
 
     logger.error(err);
+    metrics('controllers.auth.google.error', Date.now());
 
     // RPC Error
     if (err.code && err.code === 500) {
@@ -76,6 +81,8 @@ exports.googleCallback = function *googleCallback(code) {
 exports.facebookCallback = function *facebookCallback(code) {
 
   assert.equal(typeof (code), 'string', 'argument code must be a string');
+
+  var metrics = timing(Date.now());
 
   try {
 
@@ -102,6 +109,7 @@ exports.facebookCallback = function *facebookCallback(code) {
       token
     ].join('');
 
+    metrics('controllers.auth.resolve.resolve', Date.now());
     return redirectUrl;
 
 
@@ -109,6 +117,7 @@ exports.facebookCallback = function *facebookCallback(code) {
   catch (err) {
 
     logger.error(err);
+    metrics('controllers.auth.facebook.error', Date.now());
 
     // RPC Error
     if (err.code && err.code === 500) {

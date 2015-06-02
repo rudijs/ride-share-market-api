@@ -5,13 +5,15 @@ var assert = require('assert'),
 
 var config = require('./../../../config/app'),
   rpcUpdateRideshare = require(config.get('root') + '/httpd/lib/rpc/rideshares/rpc-rideshares-update'),
-  jsonRpcResponse = require(config.get('root') + '/httpd/lib/rpc/rpc-json-rpc-response');
+  jsonRpcResponse = require(config.get('root') + '/httpd/lib/rpc/rpc-json-rpc-response'),
+  timing = require(config.get('root') + '/httpd/lib/metrics/timing');
 
 module.exports = function updateRideshare(rideshare) {
 
   assert.equal(typeof (rideshare), 'object', 'argument rideshare must be an object');
 
-  var deferred = q.defer();
+  var metrics = timing(Date.now()),
+    deferred = q.defer();
 
   rpcUpdateRideshare(rideshare)
     .then(
@@ -23,14 +25,17 @@ module.exports = function updateRideshare(rideshare) {
     },
     function (err) {
       // Return JSON-API error object
+      metrics('controllers.rideshares.update.error', Date.now());
       deferred.reject(jsonRpcResponse.resolveError(err));
     }
   )
     .then(
     function (res) {
+      metrics('controllers.rideshares.update.resolve', Date.now());
       deferred.resolve({rideshares: [res]});
     },
     function (err) {
+      metrics('controllers.rideshares.update.reject', Date.now());
       deferred.reject(err);
     }
   )

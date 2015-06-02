@@ -1,6 +1,6 @@
 {
   "name": "ride-share-market-api",
-  "version": "0.0.30",
+  "version": "0.0.32",
   "description": "",
   "main": "app.js",
   "scripts": {
@@ -24,6 +24,7 @@
     "koa-json-logger": "0.0.19",
     "koa-jsonapi-headers": "^1.1.2",
     "koa-router": "^5.0.1",
+    "lynx": "^0.2.0",
     "nconf": "^0.7.1",
     "q": "^1.4.1",
     "ramda": "^0.14.0",

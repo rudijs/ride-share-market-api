@@ -6,7 +6,8 @@ var assert = require('assert'),
 var config = require('./../../../config/app'),
   rpcUserFind = require(config.get('root') + '/httpd/lib/rpc/users/rpc-users-find'),
   jsonRpcResponse = require(config.get('root') + '/httpd/lib/rpc/rpc-json-rpc-response'),
-  formatUserResponse = require(config.get('root') + '/httpd/lib/users/format-user-response');
+  formatUserResponse = require(config.get('root') + '/httpd/lib/users/format-user-response'),
+  timing = require(config.get('root') + '/httpd/lib/metrics/timing');
 
 var validateId = function validateId(id) {
   return /^[0-9a-fA-F]{24}$/.test(id);
@@ -32,7 +33,8 @@ var findById = function findById(id) {
   // TODO: test this again
   //throw new Error('Oops! Something blew up!');
 
-  var deferred = q.defer();
+  var metrics = timing(Date.now()),
+    deferred = q.defer();
 
   rpcUserFind.findById(id)
     .then(
@@ -43,14 +45,17 @@ var findById = function findById(id) {
     },
     function findByIdError(err) {
       // Return JSON-API error object
+      metrics('controllers.users.find.byId.error', Date.now());
       deferred.reject(jsonRpcResponse.resolveError(err));
     }
   )
     .then(
     function jsonRpcResponseSuccess(res) {
+      metrics('controllers.users.find.byId.resolve', Date.now());
       deferred.resolve({users: formatUserResponse(res)});
     },
     function jsonRpcResponseError(err) {
+      metrics('controllers.users.find.byId.reject', Date.now());
       deferred.reject(err);
     }
   )
